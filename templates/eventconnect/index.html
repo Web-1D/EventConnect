@@ -1,0 +1,57 @@
+
+{% extends 'eventconnect/base.html' %}
+{% load staticfiles %}
+
+
+{% block title_block %}
+Home Page
+{% endblock %}
+
+
+<body>
+{% block body_block %}
+<div>
+{% if user.is_authenticated %}
+Welcome {{ user.username }}!
+{% endif %}
+<br />
+</div>
+
+<div>
+<h2>Popular</h2>
+{% if events %}
+<ul>
+{% for event in events %}
+<li><a href="{{ page.url }}">{{ event.title }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+<strong>There are no events happening.</strong>
+{% endif %}
+</div>
+
+<div>
+<h2>Recently Added</h2>
+{% if events %}
+<ul>
+{% for event in events %}
+<li><a href="{% url 'eventconnect:show_event' event.slug %}">{{ event.name }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+<strong>There are no events happening.</strong>
+{% endif %}
+</div>
+
+
+<div>
+<h2>Categories</h2>
+<ul>
+<li><a href="{% url 'eventconnect:sports' %}">Sports</a></li>
+<li><a href="{% url 'eventconnect:music' %}">Music</a></li>
+<li><a href="{% url 'eventconnect:acedemic' %}">Acedemic</a></li>
+<li><a href="{% url 'eventconnect:cultural' %}">Cultural</a></li>
+<li><a href="{% url 'eventconnect:more' %}">More</a></li>
+</ul>
+</div>
+{% endblock %}

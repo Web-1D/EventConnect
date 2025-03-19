@@ -1,0 +1,25 @@
+{% extends 'eventconnect/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+{% if event %}
+{{ event.name }}
+{% else %}
+Unknown Event
+{% endif %}
+{% endblock %}
+
+{% block body_block %}
+{% if event %}
+<h1>{{ event.name }}</h1>
+<p>{{event.description}}</p>
+<p> {{event.time_date}}</p>
+{% if user.is_authenticated %}
+<a href="{% url 'rango:sign_up_for_event' event.slug %}">Sign Up for Event</a> <br />
+{% else %}
+Log in to sign up for event
+{% endif %}
+{% else %}
+The specified event does not exist or has already happened.
+{% endif %}
+{% endblock %}
