@@ -1,0 +1,56 @@
+{% extends 'webapp/base.html' %}
+{% load staticfiles %}
+
+
+{% block title_block %}
+Home Page
+{% endblock %}
+
+
+<body>
+{% block body_block %}
+<div>
+{% if user.is_authenticated %}
+Welcome {{ user.username }}!
+{% endif %}
+<br />
+</div>
+
+<div>
+<h2>Popular</h2>
+{% if events %}
+<ul>
+{% for event in events %}
+<li><a href="{% url 'webapp:event_detail' event.id %}">{{ event.title }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+<strong>There are no events happening.</strong>
+{% endif %}
+</div>
+
+<div>
+<h2>Recently Added</h2>
+{% if events %}
+<ul>
+{% for event in events %}
+<li><a href="{% url 'webapp:event_detail' event.id %}">{{ event.title }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+<strong>There are no events happening.</strong>
+{% endif %}
+</div>
+
+
+<div>
+<h2>Categories</h2>
+<ul>
+<li><a href="{% url 'webapp:categories' category_name='sports' %}">Sports</a></li>
+<li><a href="{% url 'webapp:categories' category_name='music' %}">Music</a></li>
+<li><a href="{% url 'webapp:categories' category_name='academic' %}">Academic</a></li>
+<li><a href="{% url 'webapp:categories' category_name='cultural' %}">Cultural</a></li>
+<li><a href="{% url 'webapp:categories' category_name='more' %}">More</a></li>
+</ul>
+</div>
+{% endblock %}

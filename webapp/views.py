@@ -1,7 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from webapp.models import User, Category, Event, Comment, QAForum
-from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -11,7 +10,8 @@ from webapp.forms import CategoryForm, EventForm, UserForm
 def home(request):
 
     category_list = Category.objects.all()
-    context_dict = {'categories' : category_list}
+    events = Event.objects.all()
+    context_dict = {'categories' : category_list, 'events': events}
 
     response = render(request, 'webapp/home.html', context=context_dict)
     return response
@@ -103,7 +103,7 @@ def user_login(request):
             print(f"Invalid login details: {username}, {password}")
             return HttpResponse("Invalid login details supplied.")
     
-    return render(request, 'webapp/login.html')
+    return render(request, 'webapp/user_login.html')
 
 @login_required
 def user_logout(request):
@@ -193,7 +193,7 @@ def organiser_login(request):
 
 @login_required
 def organiser_account(request):
-    events = Events.objects.filter(organiser=request.user)
+    events = Event.objects.filter(organiser=request.user)
     return render(request, 'webapp/organiser_account.html', {'events' : events})
 
 @login_required
@@ -231,7 +231,7 @@ def edit_event(request, event_id):
     
     try:
         event = Event.objects.get(id=event_id, organiser=request.user)
-        contextdict['event'] = event 
+        context_dict['event'] = event 
     except:
         return HttpResponse("Event not found or permission not granted.")
 

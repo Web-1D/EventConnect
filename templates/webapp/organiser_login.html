@@ -1,13 +1,13 @@
-{% extends 'eventconnect/base.html' %}
+{% extends 'webapp/base.html' %}
 {% load staticfiles %}
 
 {% block title_block %}
-User Login
+Organsier Login
 {% endblock %}
 
 {% block body_block %}
-<h1>User Login to EventConnect</h1>
-<form id="login_form" method="post" action="{% url 'eventconnect:user_login' %}">
+<h1>Organiser Login to EventConnect</h1>
+<form id="organiser_form" method="post" action="{% url 'webapp:organiser_login' %}">
 {% csrf_token %}
 Username: <input type="text" name="username" value="" size="50"/>
 <br />
