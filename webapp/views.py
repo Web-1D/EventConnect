@@ -56,11 +56,11 @@ def event_comments(request, event_id):
     try:
         event = Event.objects.get(id=event_id)
         context_dict['event'] = event
-        context_dict['comments'] = comments
+        context_dict['comments'] = Comment.objects.filter.(event=event)
     except Event.DoesNotExist:
         context_dict['event'] = None
         context_dict['comments'] = None
-        return HttpResponse("Event not found.")
+        return HttpResponse("Event not found or permission not granted.")
     
     return render(request, 'webapp/event_comments.html', context_dict)
 
@@ -135,7 +135,7 @@ def add_comment(request, event_id):
     context_dict = {}
 
     try:
-        event = Events.objects.get(id=event_id)
+        event = Event.objects.get(id=event_id)
         context_dict['event'] = event
     except Event.DoesNotExist:
         context_dict['event'] = None
@@ -158,7 +158,7 @@ def enable_notifications(request, event_id):
     context_dict = {}
 
     try:
-        event = Events.objects.get(id=event_id)
+        event = Event.objects.get(id=event_id)
         context_dict['event'] = event
     except Event.DoesNotExist:
         context_dict['event'] = None
@@ -170,9 +170,31 @@ def enable_notifications(request, event_id):
 
 def organiser_login(request):
 
-    ## unfinished
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user:
+            if user.is_active:
+                if user.role == 'organiser':
+                    login(request, user)
+                    return redirect(reverse('webapp:organiser_account'))
+                else:
+                    return HttpResponse("You do not have access to the organiser portal.")
+            else:
+                return HttpResponse("Your EventConnect account is disabled.")
+        else:
+            print(f"Invalid login details: {username}, {password}")
+            return HttpResponse("Invalid login details supplied.")
     
-    return render(request, 'webapp/organiser_login.html', context_dict)
+    return render(request, 'webapp/organiser_login.html')
+
+@login_required
+def organiser_account(request):
+    events = Events.objects.filter(organiser=request.user)
+    return render(request, 'webapp/organiser_account.html', {'events' : events})
 
 @login_required
 def add_event(request, category_name):
@@ -180,10 +202,7 @@ def add_event(request, category_name):
     try:
         category = Category.objects.get(name=category_name)
     except Category.DoesNotExist:
-        category = None
-
-    if category is None:
-        return redirect('/webapp/')
+        return HttpResponse("Category does not exist.")
 
     form = EventForm()
 
@@ -191,12 +210,12 @@ def add_event(request, category_name):
         form = EventForm(request.POST)
 
         if form.is_valid():
-            if category:
-                event = form.save(commit=False)
-                event.category = category
-                event.save()
+            event = form.save(commit=False)
+            event.category = category
+            event.organiser = request.user
+            event.save()
 
-                return redirect(reverse('webapp:categories',
+            return redirect(reverse('webapp:categories',
                                         args=[category.name]))
 
         else:
@@ -206,16 +225,37 @@ def add_event(request, category_name):
     context_dict = {'form': form, 'category': category}
     return render(request, 'webapp/add_event.html', context_dict)
 
-#def edit_event(request, event_id):
-# unfinished
+@login_required
+def edit_event(request, event_id):
+    context_dict = {}
+    
+    try:
+        event = Event.objects.get(id=event_id, organiser=request.user)
+        contextdict['event'] = event 
+    except:
+        return HttpResponse("Event not found or permission not granted.")
+
+    if request.method == 'POST':
+        form = EventForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('webapp:event_detail', args=[event_id]))
+        else:
+            form = EventForm(instance=event)
+
+    context_dict['form'] = form
+
+    return render(request, 'webapp/edit_event.html', context_dict)
 
 @login_required
 def delete_event(request, event_id):
-    context_dict = {}
 
-    ## unfinished
-        
-    return HttpResponse("incomplete")
+    try:
+        event = Event.objects.get(id=event_id, organiser=request.user)
+        event.delete()
+        return redirect(reverse('webapp:organiser_account'))
+    except Event.DoesNotExist:
+        return HttpResponse("Event not found or permission not granted.")
 
 
 
