@@ -96,4 +96,8 @@ def populate():
     print("Database populated successfully with Sport, Music, Academic, Cultural, and More categories.")
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     populate()
+=======
+    populate()
+>>>>>>> 30df37d694ec9f0601bd503bd8c346f8af5f9b03
