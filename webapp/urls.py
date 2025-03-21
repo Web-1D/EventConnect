@@ -10,11 +10,7 @@ urlpatterns = [
     path('q&a/', views.qa, name='qa'),
 
     # User Authentication
-<<<<<<< HEAD
-    path('signup/', views.sign_up, name='signup'),
-=======
     path('signup/', views.signup, name='signup'),
->>>>>>> 30df37d694ec9f0601bd503bd8c346f8af5f9b03
     path('user-login/', views.user_login, name='user_login'),
     path('logout/', views.user_logout, name='logout'),
 
@@ -29,14 +25,8 @@ urlpatterns = [
 
     # Organiser Views
     path('organiser-login/', views.organiser_login, name='organiser_login'),
-<<<<<<< HEAD
-    path('organiser-login/add-event/', views.add_event, name='add_event'),
-    #path('organiser-login/edit-event/<int:event_id>/', views.edit_event, name='edit_event'),
-    path('organiser-login/delete-event/<int:event_id>/', views.delete_event, name='delete_event'),
-=======
     path('organiser-account/', views.organiser_account, name='organiser_account'),
     path('organiser-account/add-event/', views.add_event, name='add_event'),
     path('organiser-account/edit-event/<int:event_id>/', views.edit_event, name='edit_event'),
     path('organiser-account/delete-event/<int:event_id>/', views.delete_event, name='delete_event'),
->>>>>>> 30df37d694ec9f0601bd503bd8c346f8af5f9b03
 ]

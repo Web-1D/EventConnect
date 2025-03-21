@@ -1,0 +1,29 @@
+{% extends 'webapp/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+{% if category %}
+{{ category.name }}
+{% else %}
+Unknown Category
+{% endif %}
+{% endblock %}
+
+{% block body_block %}
+    {% if category %}
+    <h1>{{ category.name }}</h1>
+        {% for event in events %}
+            <div>
+                <h2>{{ event.title }}</h2>
+                <p>{{event.description}}</p>
+                <p>Date: {{event.date}}</p>
+                <p>Location: {{ event.location }}</p>
+                <a href="{% url 'webapp:event_detail' event.id %}">View Details</a>
+            </div>
+        {% empty %}
+            <p>No events found in this category.</p>
+        {% endfor %}
+    {% else %}
+        <p>Category not found.</p>
+    {% endif %}
+{% endblock %}
