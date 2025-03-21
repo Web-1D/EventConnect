@@ -132,5 +132,6 @@ MEDIA_URL = '/media/'
 
 LOGIN_URL = 'webapp:login'
 
+AUTH_USER_MODEL = 'webapp.User'
 
 

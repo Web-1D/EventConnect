@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from webapp.forms import CategoryForm, EventForm, UserForm
 
+
 def home(request):
 
     category_list = Category.objects.all()
@@ -91,9 +92,13 @@ def user_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
+        print(f"Attempting login for: {username}")
+
         user = authenticate(username=username, password=password)
+        
 
         if user:
+            print(f"Authenticated User: {user}")
             if user.is_active:
                 login(request, user)
                 return redirect(reverse('webapp:home'))

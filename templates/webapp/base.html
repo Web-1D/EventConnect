@@ -10,7 +10,7 @@
 <body>
 <div class="topnav">
 
-{% if user.is_authenticated and user.is_organiser %}
+{% if user.is_authenticated and user.role == "organiser" %}
 <!-- Show these links when the user is logged in as organiser -->
 
 <a href="{% url 'webapp:logout' %}">Logout</a>

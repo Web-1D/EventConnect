@@ -1,6 +1,6 @@
 from django import forms
-from webapp.models import User, Category, Event, Comment, QAForum
-from django.contrib.auth.models import User
+from webapp.models import User, Category, Event
+
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -14,6 +14,7 @@ class EventForm(forms.ModelForm):
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
+    role = forms.ChoiceField(choices=User.ROLE_CHOICES, required=True)
 
     class Meta:
         model = User

@@ -15,6 +15,9 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.role})"
+    
+    def is_organiser(self):
+        return self.role == 'organiser'
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
