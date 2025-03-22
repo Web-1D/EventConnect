@@ -1,56 +1,56 @@
 {% extends 'webapp/base.html' %}
 {% load staticfiles %}
 
-
 {% block title_block %}
 Home Page
 {% endblock %}
 
-
-<body>
 {% block body_block %}
-<div>
-{% if user.is_authenticated %}
-Welcome {{ user.username }}!
-{% endif %}
-<br />
+
+<div class="container">
+    <!-- Left Sidebar Categories -->
+    <div class="categories">
+        <h2>Categories</h2>
+        <ul>
+            {% for category in categories %}
+                <li><a href="{% url 'webapp:categories' category_name=category.name %}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="content">
+        <h2>Popular Events</h2>
+        <div class="event-list">
+            {% for event in popular_events %}
+                <div class="event-card">
+                    <a href="{% url 'webapp:event' event.id %}">
+                        <img src="{% static 'images/event_placeholder.png' %}" alt="Event Photo">
+                        <h3>{{ event.title }}</h3>
+                    </a>
+                    <p>Organized by: {{ event.organiser.username }}</p>
+                    <p>📍 {{ event.location }} | 🗓️ {{ event.date|date:"F d, Y" }}</p>
+                </div>
+            {% empty %}
+                <p>No popular events found.</p>
+            {% endfor %}
+        </div>
+
+        <h2>Recently Added</h2>
+        <div class="event-list">
+            {% for event in recent_events %}
+                <div class="event-card">
+                    <a href="{% url 'webapp:event' event.id %}">
+                        <img src="{% static 'images/event_placeholder.png' %}" alt="Event Photo">
+                        <h3>{{ event.title }}</h3>
+                    </a>
+                    <p>Organized by: {{ event.organiser.username }}</p>
+                    <p>📍 {{ event.location }} | 🗓️ {{ event.date|date:"F d, Y" }}</p>
+                </div>
+            {% empty %}
+                <p>No recent events found.</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
-<div>
-<h2>Popular</h2>
-{% if events %}
-<ul>
-{% for event in events %}
-<li><a href="{% url 'webapp:event' event.id %}">{{ event.title }}</a></li>
-{% endfor %}
-</ul>
-{% else %}
-<strong>There are no events happening.</strong>
-{% endif %}
-</div>
-
-<div>
-<h2>Recently Added</h2>
-{% if events %}
-<ul>
-{% for event in events %}
-<li><a href="{% url 'webapp:event' event.id %}">{{ event.title }}</a></li>
-{% endfor %}
-</ul>
-{% else %}
-<strong>There are no events happening.</strong>
-{% endif %}
-</div>
-
-
-<div>
-<h2>Categories</h2>
-<ul>
-<li><a href="{% url 'webapp:categories' category_name='Sport' %}">Sport</a></li>
-<li><a href="{% url 'webapp:categories' category_name='Music' %}">Music</a></li>
-<li><a href="{% url 'webapp:categories' category_name='Academic' %}">Academic</a></li>
-<li><a href="{% url 'webapp:categories' category_name='Cultural' %}">Cultural</a></li>
-<li><a href="{% url 'webapp:categories' category_name='More' %}">More</a></li>
-</ul>
-</div>
 {% endblock %}

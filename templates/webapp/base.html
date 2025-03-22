@@ -4,48 +4,41 @@
 
 <html>
 <head lang="en">
-<meta charset="UTF-8" />
-<title>EventConnect - {% block title_block %}Welcome to EventConnect{% endblock %}</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>EventConnect - {% block title_block %}Welcome to EventConnect{% endblock %}</title>
 </head>
 <body>
+
 <div class="topnav">
+    {% if user.is_authenticated %}
+    	<span>Welcome, {{ user.username }}!</span>
+    	<a href="{% url 'webapp:logout' %}">Logout</a>
 
-{% if user.is_authenticated and user.role == "organiser" %}
-<!-- Show these links when the user is logged in as organiser -->
+    	{% if user.role == "organiser" %}
+        	<a href="{% url 'webapp:organiser_account' %}">Organiser Dashboard</a>
+    	{% else %}
+        	<a href="{% url 'webapp:home' %}">User Dashboard</a>
+    	{% endif %}
+	{% else %}
+    	<a href="{% url 'webapp:signup' %}">Sign Up</a>
+    	<a href="{% url 'webapp:user_login' %}">User Login</a>
+    	<a href="{% url 'webapp:organiser_login' %}">Organiser Login</a>
+	{% endif %}
 
-<a href="{% url 'webapp:logout' %}">Logout</a>
-<a href="{% url 'webapp:add_event' %}">Add New Event</a>
-{% elif user.is_authenticated %}   
-<!-- Show these links when the user is logged in as user-->
-<a href="{% url 'webapp:organiser_login' %}">Login as Organiser</a>
-<a href="{% url 'webapp:logout' %}">Logout</a>
-<!-- Show these links when the user is NOT logged in-->
-{% else %}
-<a href="{% url 'webapp:signup' %}">Sign Up</a>
-<a href="{% url 'webapp:organiser_login' %}">Organiser Login</a>
-<a href="{% url 'webapp:user_login' %}">User Login</a>
-{% endif %}
-<!-- Outside the conditional statements, ALWAYS show -->
 
-<!-- Removed Search as no view matching it -->
-
-<a href="{% url 'webapp:home' %}">Home</a>
+    <a href="{% url 'webapp:home' %}">Home</a>
 </div>
-<h1>EventConnect</h1>
 
+<h1 id="main_title">EventConnect</h1>
 
 {% block body_block %}
 {% endblock %}
 
-
-
-
 <div class="bottomnav">
-	<a href="{% url 'webapp:qa' %}">Q&A Forum</a>
-	<a href="{% url 'webapp:contact' %}">Contact Us</a>
-<h1>EventConnect</h1>
-
-
+    <a href="{% url 'webapp:qa' %}" id="qanda">Q&A Forum</a>
+    <a href="{% url 'webapp:contact' %}" id="contact">Contact Us</a>
+</div>
 
 </body>
 </html>

@@ -11,8 +11,12 @@ from webapp.forms import CategoryForm, EventForm, UserForm
 def home(request):
 
     category_list = Category.objects.all()
-    events = Event.objects.all()
-    context_dict = {'categories' : category_list, 'events': events}
+    events = Event.objects.all().order_by('-date')
+
+    popular_events = Event.objects.all().order_by('-attendees')[:3]
+    recent_events = events[:3]  # Show 3 most recent events
+
+    context_dict = {'categories' : category_list, 'events': events, 'recent_events': recent_events, 'popular_events': popular_events}
 
     response = render(request, 'webapp/home.html', context=context_dict)
     return response
