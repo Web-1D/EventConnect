@@ -1,0 +1,40 @@
+{% extends 'webapp/base.html' %}
+
+{% block title_block %}
+{{ event.title }}
+{% endblock %}
+
+{% block body_block %}
+<h2>{{ event.title }}</h2>
+
+<p><strong>Date:</strong> {{ event.date|date:"Y-m-d H:i" }}</p>
+<p><strong>Location:</strong> {{ event.location }}</p>
+<p><strong>Description:</strong> {{ event.description }}</p>
+<p><strong>Category:</strong> <a href="{% url 'webapp:categories' event.category.name %}">{{ event.category.name }}</a></p>
+
+
+{% if event.google_maps_link %}
+    <h3>Event Location Preview (Google Maps)</h3>
+    <iframe
+        src="https://www.google.com/maps?q={{ event.google_maps_link|urlencode }}&output=embed"
+        width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+
+    <p>
+        <a href="{{ event.google_maps_link }}" target="_blank">
+            View in Google Maps ↗
+        </a>
+    </p>
+{% endif %}
+
+
+{% if user.is_authenticated and user.role == 'organiser' and user == event.organiser %}
+    <p>
+        <a href="{% url 'webapp:edit_event' event.id %}">Edit</a>
+        <a href="{% url 'webapp:delete_event' event.id %}">Delete</a>
+    </p>
+{% endif %}
+
+<p><a href="{% url 'webapp:home' %}">← Back to Home</a></p>
+{% endblock %}
+
+

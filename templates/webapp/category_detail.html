@@ -1,0 +1,39 @@
+{% extends 'webapp/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+{{ category.name }} Events
+{% endblock %}
+
+{% block body_block %}
+<h2>Events in {{ category.name }}</h2>
+
+{% if user.is_authenticated and user.role == 'organiser' %}
+    <p>
+        <a href="{% url 'webapp:add_event' category.name %}">
+            ➕ Add New Event to {{ category.name }}
+        </a>
+    </p>
+{% endif %}
+
+{% if events %}
+    <ul>
+        {% for event in events %}
+            <li>
+                <a href="{% url 'webapp:event_detail' event.id %}">
+                    <strong>{{ event.title }}</strong>
+                </a>
+                <br>
+                Date: {{ event.date|date:"Y-m-d H:i" }}<br>
+                Location: {{ event.location }}<br>
+                Organiser: {{ event.organiser.username }}
+            </li>
+            <hr>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No events in this category yet.</p>
+{% endif %}
+
+<p><a href="{% url 'webapp:home' %}">← Back to Home</a></p>
+{% endblock %}

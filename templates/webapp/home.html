@@ -1,0 +1,84 @@
+{% extends 'webapp/base.html' %}
+{% load staticfiles %}
+
+
+{% block title_block %}
+Home Page
+{% endblock %}
+
+
+{% block body_block %}
+<div>
+{% if user.is_authenticated %}
+Welcome {{ user.username }}!
+{% endif %}
+<br />
+</div>
+
+<!-- search events -->
+<h2>Search Events</h2>
+<form method="GET" action="{% url 'webapp:search_event_redirect' %}">
+    <input type="text" id="searchInput" name="search_term" placeholder="Search for events..." autocomplete="off">
+    <div id="autocomplete-results" style="border: 1px solid #ccc; display: none; position: absolute; background: white; z-index: 1000;"></div>
+
+    <select name="category_filter">
+        <option value="">All Categories</option>
+        {% for category in all_categories %}
+            <option value="{{ category.name }}">{{ category.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+
+</form>
+<ul id="suggestions" style="list-style-type:none; padding:0;"></ul>
+<!-- search events -->
+
+
+<div>
+<h2>Popular</h2>
+{% if events %}
+<ul>
+{% for event in events %}
+<li><a href="{% url 'webapp:event_detail' event.id %}">{{ event.title }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+<strong>There are no events happening.</strong>
+{% endif %}
+</div>
+
+<div>
+<h2>Recently Added</h2>
+{% if events %}
+<ul>
+{% for event in events %}
+<li><a href="{% url 'webapp:event_detail' event.id %}">{{ event.title }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+<strong>There are no events happening.</strong>
+{% endif %}
+</div>
+
+
+<div>
+  <h2>Main Categories</h2>
+  <ul>
+    {% for category in main_categories %}
+      <li><a href="{% url 'webapp:categories' category_name=category.name %}">{{ category.name|title }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div>
+  <h2>Other Categories</h2>
+  <ul>
+    {% for category in other_categories %}
+      <li><a href="{% url 'webapp:categories' category_name=category.name %}">{{ category.name|title }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% endblock %}
+
+

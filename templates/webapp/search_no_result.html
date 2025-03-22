@@ -1,0 +1,13 @@
+{% extends 'webapp/base.html' %}
+
+{% block title_block %}
+No Event Found
+{% endblock %}
+
+{% block body_block %}
+<h2>Search Result</h2>
+
+<p>Sorry, this page doesnt exist "<strong>{{ title }}</strong>".</p>
+
+<p>Try <a href="{% url 'webapp:home' %}">other events</a>.</p>
+{% endblock %}

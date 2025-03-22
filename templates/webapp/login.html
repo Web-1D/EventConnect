@@ -1,0 +1,26 @@
+{% extends 'webapp/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+Login
+{% endblock %}
+
+{% block body_block %}
+<h1>Login to EventConnect</h1>
+<form method="post" action="{% url 'webapp:login' %}">
+    {% csrf_token %}
+    <label for="username">Username:</label>
+    <input type="text" name="username" required><br>
+
+    <label for="password">Password:</label>
+    <input type="password" name="password" required><br>
+
+    <label for="role">Role:</label>
+    <select name="role" required>
+        <option value="user">User</option>
+        <option value="organiser">Organiser</option>
+    </select><br><br>
+
+    <input type="submit" value="Login">
+</form>
+{% endblock %}

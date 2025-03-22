@@ -1,0 +1,42 @@
+{% extends 'webapp/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+Organiser Account
+{% endblock %}
+
+{% block body_block %}
+<h2>Welcome, {{ user.username }}!</h2>
+
+<h3>Your Events:</h3>
+{% if events %}
+    <ul>
+    {% for event in events %}
+        <li>
+            {{ event.title }} ({{ event.category.name }}) – {{ event.date|date:"Y-m-d H:i" }}
+            <br />
+            <a href="{% url 'webapp:edit_event' event.id %}">Edit</a> |
+            <a href="{% url 'webapp:delete_event' event.id %}">Delete</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>You haven't created any events yet</p>
+{% endif %}
+
+<hr />
+
+<h3>Add New Event to a Category:</h3>
+<ul>
+    {% for category in categories %}
+        <li>
+            <a href="{% url 'webapp:add_event' category.name %}">{{ category.name }}</a>
+
+        </li>
+    {% endfor %}
+</ul>
+
+<p><a href="{% url 'webapp:add_category' %}"><strong>Add a New Category</strong></a></p>
+
+
+{% endblock %}
