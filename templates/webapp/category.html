@@ -18,7 +18,7 @@ Unknown Category
                 <p>{{event.description}}</p>
                 <p>Date: {{event.date}}</p>
                 <p>Location: {{ event.location }}</p>
-                <a href="{% url 'webapp:event_detail' event.id %}">View Details</a>
+                <a href="{% url 'webapp:event' event.id %}">View Details</a>
             </div>
         {% empty %}
             <p>No events found in this category.</p>
