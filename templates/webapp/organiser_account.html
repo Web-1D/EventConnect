@@ -1,0 +1,21 @@
+{% extends 'webapp/base.html' %}
+{% block title_block %}Organiser Account{% endblock %}
+
+{% block body_block %}
+    <h1>Welcome, {{ request.user.username }}!</h1>
+    <h2>Your Events:</h2>
+    {% if events %}
+        <ul>
+            {% for event in events %}
+                <li>
+                    <a href="{% url 'webapp:event' event.id %}">{{ event.title }}</a> - 
+                    <a href="{% url 'webapp:add_event'}">Edit</a> - 
+                    <a href="{% url 'webapp:delete_event' event.id %}">Delete</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You don't have any events yet.</p>
+    {% endif %}
+    <a href="{% url 'webapp:add_event' %}">Add Event</a>
+{% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'webapp/base.html' %}
-{% load staticfiles %}
+{% load static %}
 
 {% block title_block %}
     Signup
@@ -8,7 +8,7 @@
 {% block body_block %}
 <h1>Sign Up for EventConnect</h1>
 {% if registered %}
-Rango says: <strong>thank you for signing up!</strong>
+<strong>Thank you for signing up to EventConnect!</strong>
 <a href="{% url 'webapp:home' %}">Return to the homepage.</a><br />
 {% else %}
 <form id="user_form" method="post" action="{% url 'webapp:signup' %}"

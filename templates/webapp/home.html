@@ -1,5 +1,5 @@
 {% extends 'webapp/base.html' %}
-{% load staticfiles %}
+{% load static %}
 
 
 {% block title_block %}
@@ -21,7 +21,7 @@ Welcome {{ user.username }}!
 {% if events %}
 <ul>
 {% for event in events %}
-<li><a href="{% url 'webapp:event_detail' event.id %}">{{ event.title }}</a></li>
+<li><a href="{% url 'webapp:event' event.id %}">{{ event.title }}</a></li>
 {% endfor %}
 </ul>
 {% else %}
@@ -34,7 +34,7 @@ Welcome {{ user.username }}!
 {% if events %}
 <ul>
 {% for event in events %}
-<li><a href="{% url 'webapp:event_detail' event.id %}">{{ event.title }}</a></li>
+<li><a href="{% url 'webapp:event' event.id %}">{{ event.title }}</a></li>
 {% endfor %}
 </ul>
 {% else %}

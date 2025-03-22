@@ -1,0 +1,30 @@
+{% extends 'webapp/base.html' %}
+
+{% block title_block %}
+    Sign Up for Event
+{% endblock %}
+
+{% block body_block %}
+    <h1>Sign Up for Event: {{ event.name }}</h1>
+    <p>{{ event.description }}</p>
+    <p><strong>Date and Time:</strong> {{ event.time_date }}</p>
+
+    <h3>Sign up for this event</h3>
+
+    {% if user.is_authenticated %}
+        <p>You are signed in as {{ user.username }}.</p>
+
+        {% if already_signed_up %}
+            <p>You are already signed up for this event.</p>
+        {% else %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+        {% endif %}
+
+    {% else %}
+        <p>You must be logged in to sign up for this event.</p>
+        <a href="{% url 'webapp:user_login' %}">Log in</a> to sign up.
+    {% endif %}
+{% endblock %}

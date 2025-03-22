@@ -8,9 +8,14 @@ class CategoryForm(forms.ModelForm):
         fields = ['name']
 
 class EventForm(forms.ModelForm):
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        empty_label="Select a category",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     class Meta:
         model = Event
-        fields = ['title', 'description', 'date', 'location']
+        fields = ['title', 'description', 'date', 'location', 'category']
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())

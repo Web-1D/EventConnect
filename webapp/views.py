@@ -18,6 +18,16 @@ def home(request):
     return response
 
 def contact(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        if name and email and message:
+            # not sure where we're sending messages to
+            return render(request, 'webapp/contact.html', {'message_sent': True})
+        else:
+            return HttpResponse("All fields are required.", status=400)
     return render(request, 'webapp/contact.html')
 
 def qa(request):
@@ -38,32 +48,19 @@ def categories(request, category_name):
     
     return render(request, 'webapp/category.html', context_dict)
 
-def event_detail(request, event_id):
+def event(request, event_id):
 
     context_dict = {}
 
     try:
         event = Event.objects.get(id=event_id)
+        comments = Comment.objects.filter(event=event)
         context_dict['event'] = event
+        context_dict['comments'] = comments
     except Event.DoesNotExist:
-        context_dict['event'] = None
+        return HttpResponse("Event not found.")
     
     return render(request, 'webapp/event.html', context_dict)
-
-def event_comments(request, event_id):
-
-    context_dict = {}
-
-    try:
-        event = Event.objects.get(id=event_id)
-        context_dict['event'] = event
-        context_dict['comments'] = Comment.objects.filter(event=event)
-    except Event.DoesNotExist:
-        context_dict['event'] = None
-        context_dict['comments'] = None
-        return HttpResponse("Event not found or permission not granted.")
-    
-    return render(request, 'webapp/event_comments.html', context_dict)
 
 def signup(request):
     registered = False
@@ -117,45 +114,36 @@ def user_logout(request):
 
 @login_required
 def event_signup(request, event_id):
-
-    context_dict = {}
-
-    try:
-        event = Event.objects.get(id=event_id)
-        context_dict['event'] = event
-    except Event.DoesNotExist:
-        context_dict['event'] = None
-        return HttpResponse("Event not found.")
+    event = Event.objects.get(id=event_id)
+    
+    already_signed_up = False
+    
+    if request.user.is_authenticated:
+        already_signed_up = event.attendees.filter(id=request.user.id).exists()
 
     if request.method == 'POST':
-        event.attendees.add(request.user)
-        
-        return redirect(reverse('webapp:event_detail', args=[event_id]))
-
+        if not already_signed_up:
+            event.attendees.add(request.user)
+            return redirect('webapp:event', event_id=event.id)
+    
+    context_dict = {
+        'event': event,
+        'already_signed_up': already_signed_up,
+    }
     return render(request, 'webapp/event_signup.html', context_dict)
 
 @login_required
 def add_comment(request, event_id):
-
-    context_dict = {}
-
-    try:
-        event = Event.objects.get(id=event_id)
-        context_dict['event'] = event
-    except Event.DoesNotExist:
-        context_dict['event'] = None
-        return HttpResponse("Event not found.")
-
+    event = Event.objects.get(id=event_id)
+    
     if request.method == 'POST':
         message = request.POST.get('comment')
         if message:
             Comment.objects.create(user=request.user, event=event, comment=message)
-            
-            return redirect(reverse('webapp:event_comments', args=[event_id]))
-        else:
-            return HttpResponse("Comment may not be blank.")
-    
-    return render(request, 'webapp.add_comment.html', context_dict)
+        
+        return redirect('webapp:event', event_id=event.id)
+
+    return redirect('webapp:event', event_id=event.id)
 
 @login_required
 def enable_notifications(request, event_id):
@@ -202,33 +190,18 @@ def organiser_account(request):
     return render(request, 'webapp/organiser_account.html', {'events' : events})
 
 @login_required
-def add_event(request, category_name):
-    
-    try:
-        category = Category.objects.get(name=category_name)
-    except Category.DoesNotExist:
-        return HttpResponse("Category does not exist.")
-
-    form = EventForm()
-
+def add_event(request):
     if request.method == 'POST':
         form = EventForm(request.POST)
-
         if form.is_valid():
             event = form.save(commit=False)
-            event.category = category
             event.organiser = request.user
             event.save()
+            return redirect(reverse('webapp:organiser_account'))
+    else:
+        form = EventForm()
 
-            return redirect(reverse('webapp:categories',
-                                        args=[category.name]))
-
-        else:
-            print(form.errors)
-
-            
-    context_dict = {'form': form, 'category': category}
-    return render(request, 'webapp/add_event.html', context_dict)
+    return render(request, 'webapp/add_event.html', {'form': form})
 
 @login_required
 def edit_event(request, event_id):
@@ -244,7 +217,7 @@ def edit_event(request, event_id):
         form = EventForm(request.POST, instance=event)
         if form.is_valid():
             form.save()
-            return redirect(reverse('webapp:event_detail', args=[event_id]))
+            return redirect(reverse('webapp:event', args=[event_id]))
         else:
             form = EventForm(instance=event)
 
