@@ -16,7 +16,7 @@ Welcome {{ user.username }}!
 <br />
 </div>
 
-<div>
+<div class=trendingList>
 <h2>Popular</h2>
 {% if events %}
 <ul>
@@ -25,11 +25,11 @@ Welcome {{ user.username }}!
 {% endfor %}
 </ul>
 {% else %}
-<strong>There are no events happening.</strong>
+<strong>There are no events happening right now.</strong>
 {% endif %}
 </div>
 
-<div>
+<div class=trendingList>
 <h2>Recently Added</h2>
 {% if events %}
 <ul>
@@ -38,12 +38,12 @@ Welcome {{ user.username }}!
 {% endfor %}
 </ul>
 {% else %}
-<strong>There are no events happening.</strong>
+<strong>There are no events happening right now.</strong>
 {% endif %}
 </div>
 
 
-<div>
+<div class=trendingList>
 <h2>Categories</h2>
 <ul>
 <li><a href="{% url 'webapp:categories' category_name='Sport' %}">Sport</a></li>
