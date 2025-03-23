@@ -5,17 +5,26 @@
     <h1>Welcome, {{ request.user.username }}!</h1>
     <h2>Your Events:</h2>
     {% if events %}
-        <ul>
+    <div class="content">
+        <div class="event-list">
             {% for event in events %}
-                <li>
-                    <a href="{% url 'webapp:event' event.id %}">{{ event.title }}</a> - 
+                <div class="event-card">
+                    <a href="{% url 'webapp:event' event.id %}">
+                        {% if event.event_image %}
+                            <img src="{{ event.event_image.url }}" alt="{{ event.title }}" style="width: 200px; height: 150px;">
+                        {% endif %}
+                    <h2>{{ event.title }}</h2>
+                    </a>
                     <a href="{% url 'webapp:add_event'}">Edit</a> - 
                     <a href="{% url 'webapp:delete_event' event.id %}">Delete</a>
-                </li>
+                    <p>🗓️ {{ event.date|date:"F d, Y" }}</p>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
+    </div>
     {% else %}
         <p>You don't have any events yet.</p>
     {% endif %}
     <a href="{% url 'webapp:add_event' %}">Add Event</a>
 {% endblock %}
+

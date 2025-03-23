@@ -33,6 +33,7 @@ class Event(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     organiser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organised_events')
     attendees = models.ManyToManyField(User, related_name='attended_events', blank=True)
+    event_image = models.ImageField(upload_to='event_images/', null=True, blank=True)
     
     def __str__(self):
         return self.title

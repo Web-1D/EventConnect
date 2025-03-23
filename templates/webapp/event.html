@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block body_block %}
+{% if event.event_image %}
+    <img src="{{ event.event_image.url }}" alt="{{ event.title }}" style="width: 400px; height: 300px;">
+{% endif %}
 <h1>{{ event.title }}</h1>
 <p>{{ event.description }}</p>
 <p>Date: {{ event.date }}</p>

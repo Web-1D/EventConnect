@@ -196,7 +196,7 @@ def organiser_account(request):
 @login_required
 def add_event(request):
     if request.method == 'POST':
-        form = EventForm(request.POST)
+        form = EventForm(request.POST, request.FILES)
         if form.is_valid():
             event = form.save(commit=False)
             event.organiser = request.user
@@ -218,7 +218,7 @@ def edit_event(request, event_id):
         return HttpResponse("Event not found or permission not granted.")
 
     if request.method == 'POST':
-        form = EventForm(request.POST, instance=event)
+        form = EventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
             form.save()
             return redirect(reverse('webapp:event', args=[event_id]))

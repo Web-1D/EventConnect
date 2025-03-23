@@ -15,7 +15,7 @@ class EventForm(forms.ModelForm):
     )
     class Meta:
         model = Event
-        fields = ['title', 'description', 'date', 'location', 'category']
+        fields = ['title', 'description', 'date', 'location', 'category', 'event_image']
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())

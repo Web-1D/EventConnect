@@ -11,18 +11,25 @@ Unknown Category
 
 {% block body_block %}
     {% if category %}
-    <h1>{{ category.name }}</h1>
-        {% for event in events %}
-            <div>
-                <h2>{{ event.title }}</h2>
-                <p>{{event.description}}</p>
-                <p>Date: {{event.date}}</p>
-                <p>Location: {{ event.location }}</p>
-                <a href="{% url 'webapp:event' event.id %}">View Details</a>
-            </div>
-        {% empty %}
-            <p>No events found in this category.</p>
-        {% endfor %}
+    <div class="content">
+        <h1>{{ category.name }}</h1>
+        <div class="event-list">
+            {% for event in events %}
+                <div class="event-card">
+                    <a href="{% url 'webapp:event' event.id %}">
+                        {% if event.event_image %}
+                            <img src="{{ event.event_image.url }}" alt="{{ event.title }}" style="width: 200px; height: 150px;">
+                        {% endif %}
+                    <h2>{{ event.title }}</h2>
+                    </a>
+                    <p>Organized by: {{ event.organiser.username }}</p>
+                    <p>🗓️ {{ event.date|date:"F d, Y" }}</p>
+                </div>
+            {% empty %}
+                <p>No events found in this category.</p>
+            {% endfor %}
+        </div>
+    </div>
     {% else %}
         <p>Category not found.</p>
     {% endif %}

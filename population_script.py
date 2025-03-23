@@ -33,7 +33,8 @@ def populate():
         date=datetime(2025, 10, 10, 16, 0),
         location="Garscube",
         category=sport_category,
-        organiser=organiser
+        organiser=organiser,
+        event_image="event_images/football.jpg"
     )
 
     event2 = Event.objects.create(
@@ -42,7 +43,8 @@ def populate():
         date=datetime(2025, 6, 25, 19, 30),
         location="QMU",
         category=music_category,
-        organiser=organiser
+        organiser=organiser,
+        event_image="event_images/jazz.jpg"
     )
 
     event3 = Event.objects.create(
@@ -51,7 +53,8 @@ def populate():
         date=datetime(2025, 4, 5, 10, 00),
         location="Science Building, Room 203",
         category=academic_category,
-        organiser=organiser
+        organiser=organiser,
+        event_image="event_images/maths.jpg"
     )
 
     event4 = Event.objects.create(
@@ -60,7 +63,8 @@ def populate():
         date=datetime(2025, 5, 15, 12, 0),
         location="Kelvingrove",
         category=cultural_category,
-        organiser=organiser
+        organiser=organiser,
+        event_image="event_images/culture.jpg"
     )
 
     event5 = Event.objects.create(
@@ -69,7 +73,8 @@ def populate():
         date=datetime(2025, 5, 10, 14, 0),
         location="Boyd Orr",
         category=more_category,
-        organiser=organiser
+        organiser=organiser,
+        event_image="event_images/gamejam.jpg"
     )
 
     # Users sign up for events

@@ -44,31 +44,44 @@
 /* Main Content */
 .content {
     width: 75%;
-    padding: 20px;
+    padding: 10px;
 }
 
-/* Event List */
+/* Event List - Ensure 3 in a Row */
 .event-list {
     display: flex;
-    gap: 20px;
     flex-wrap: wrap;
+    gap: 20px;
     justify-content: center;
 }
 
+/* Event Card - Uniform size */
 .event-card {
     background: #f8f9fa;
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 15px;
     border-radius: 8px;
     transition: transform 0.3s ease;
+    text-align: center;
+    width: calc(33.33% - 20px);  /* 3 items per row with spacing */
+    max-width: 300px; 
+    min-height: 400px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.event-card:hover {
-    transform: scale(1.02);
+/* Ensure Images are Properly Sized */
+.event-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; 
+    border-radius: 5px;
 }
 
 .event-card a {
-    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
     color: #0056b3;
     font-weight: bold;
 }
@@ -78,6 +91,9 @@
 }
 
 
+.event-card:hover {
+    transform: scale(1.02);
+}
 
 
 /* Top Navigation Bar */
