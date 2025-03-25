@@ -43,7 +43,25 @@ class ModelTest(TestCase):
         self.assertEqual(self.qa.message_text, "Login not working?")
         self.assertEqual(self.qa.user.username, "sean")
 
-class ViewsTest(TestCase):
+class ViewsTestNoData(TestCase):
+    def test_home_view_with_no_events(self):
+        response = self.client.get(reverse('webapp:home'))
+
+        # 200 means a successful request
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No popular events found.")
+        self.assertContains(response, "No recent events found.")
+
+    def test_category_view_with_no_events(self):
+        add_category('Sport')
+        
+        response = self.client.get(reverse('webapp:categories', args=['Sport']))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No events found in this category.")
+        self.assertTemplateUsed(response, 'webapp/category.html')
+
+class ViewsTestWithData(TestCase):  
     def setUp(self):
         self.user = User.objects.create_user(username="sean", email="sean@test.com", password="test123", role="user")
         self.organiser = User.objects.create_user(username="organiser2", email="organiser2@test.com", password="organ23", role="organiser")
@@ -53,6 +71,7 @@ class ViewsTest(TestCase):
             date=timezone.now(), location="Garscube",
             category=self.category, organiser=self.organiser
         )
+        self.comment = Comment.objects.create(user=self.user, event=self.event, comment="I'm going to win!!!")
 
     def test_home_view(self):
         response = self.client.get(reverse('webapp:home'))
@@ -60,5 +79,56 @@ class ViewsTest(TestCase):
         self.assertContains(response, "Sport")
         self.assertContains(response, "Tennis Tournament")
         self.assertTemplateUsed(response, 'webapp/home.html')
-
     
+    def test_contact_view(self):
+        response = self.client.get(reverse('webapp:contact'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'webapp/contact.html')
+    
+    def test_contact_view_post(self):
+        response = self.client.post(reverse('webapp:contact'), {
+            'name': 'Test User',
+            'email': 'user@test.com',
+            'message': 'Need help with my account'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('message_sent' in response.context)
+    
+    def test_event_view(self):
+        response = self.client.get(reverse('webapp:event', args=[self.event.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'webapp/event.html')
+        self.assertContains(response, self.event.title)
+    
+    def test_signup_view(self):
+        response = self.client.get(reverse('webapp:signup'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'webapp/signup.html')
+    
+    def test_user_login_view_invalid(self):
+        response = self.client.post(reverse('webapp:user_login'), {'username': 'test', 'password': 'wrongpassword'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Invalid login details supplied.")
+
+    def test_event_signup_view_authenticated(self):
+        self.client.login(username='sean', password='test123')
+        response = self.client.post(reverse('webapp:event_signup', args=[self.event.id]))
+        # 302 redirects after a successful signup
+        self.assertEqual(response.status_code, 302)
+    
+    def test_add_comment_view_authenticated(self):
+        self.client.login(username='sean', password='test123')
+        response = self.client.post(reverse('webapp:add_comment', args=[self.event.id]), {'comment': 'Cant wait!'})
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Comment.objects.filter(comment='Cant wait!').exists())
+    
+    def test_organiser_account_view(self):
+        self.client.login(username='organiser2', password='organ23')
+        response = self.client.get(reverse('webapp:organiser_account'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'webapp/organiser_account.html')
+
+def add_category(name):
+        category = Category.objects.get_or_create(name=name)[0]
+        category.save()
+        return category
