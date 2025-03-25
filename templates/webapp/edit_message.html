@@ -1,0 +1,15 @@
+{% extends 'webapp/base.html' %}
+
+{% block title_block %}Edit Message{% endblock %}
+
+{% block body_block %}
+<div class="container mt-5">
+    <h2 class="mb-4">Edit Your Message</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="{% url 'webapp:qa' %}" class="btn btn-secondary ml-2">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,99 +1,63 @@
 import os
 import django
-from datetime import datetime
+import random
+from datetime import datetime, timedelta
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'EventConnect.settings')
 django.setup()
 
-from webapp.models import Category, Event, Comment, QAForum, User
-
-User.objects.all().delete()
-Category.objects.all().delete()
-Event.objects.all().delete()
-Comment.objects.all().delete()
-QAForum.objects.all().delete()
+from webapp.models import User, Category, Event
 
 def populate():
-    # Create Users
-    organiser = User.objects.create_user(username="sean", email="sean@example.com", password="test123", role="organiser")
-    user1 = User.objects.create_user(username="sinead", email="sinead@example.com", password="test123", role="user")
-    user2 = User.objects.create_user(username="costi", email="costi@example.com", password="test123", role="user")
+    # Clear existing data (opțional, doar pentru teste)
+    Event.objects.all().delete()
+    User.objects.filter(username__startswith="testuser").delete()
+    User.objects.filter(username__startswith="organiser").delete()
 
-    # Create Categories
-    sport_category = Category.objects.create(name="Sports")
-    music_category = Category.objects.create(name="Music")
-    academic_category = Category.objects.create(name="Academic")
-    cultural_category = Category.objects.create(name="Cultural")
-    more_category = Category.objects.create(name="More")
+    # Create categories if not already
+    category_names = ["Sports", "Music", "Academic", "Cultural", "More"]
+    categories = []
+    for name in category_names:
+        category, _ = Category.objects.get_or_create(name=name)
+        categories.append(category)
 
-    # Create Events
-    event1 = Event.objects.create(
-        title="University Football Championship",
-        description="Annual university football tournament.",
-        date=datetime(2025, 10, 10, 16, 0),
-        location="Garscube",
-        category=sport_category,
-        organiser=organiser
-    )
+    # Create organisers
+    organisers = []
+    for i in range(1, 4):
+        user = User.objects.create_user(
+            username=f"organiser{i}",
+            password="organiserpass",
+            email=f"organiser{i}@test.com",
+            role="organiser"
+        )
+        organisers.append(user)
 
-    event2 = Event.objects.create(
-        title="Jazz Night",
-        description="A night of jazz performances.",
-        date=datetime(2025, 6, 25, 19, 30),
-        location="QMU",
-        category=music_category,
-        organiser=organiser
-    )
+    # Create normal users
+    for i in range(1, 6):
+        User.objects.create_user(
+            username=f"testuser{i}",
+            password="testpass",
+            email=f"user{i}@test.com",
+            role="user"
+        )
 
-    event3 = Event.objects.create(
-        title="Mathematics Workshop",
-        description="A workshop on advanced calculus.",
-        date=datetime(2025, 4, 5, 10, 00),
-        location="Science Building, Room 203",
-        category=academic_category,
-        organiser=organiser
-    )
+    # Google Maps Embed Link
+    gmaps_link = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5836.714949869367!2d-4.292463482603151!3d55.86880718879993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d20af469b3%3A0xa3f0620b655e4983!2sUniversitatea%20din%20Glasgow!5e1!3m2!1sro!2suk!4v1742891391229!5m2!1sro!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
 
-    event4 = Event.objects.create(
-        title="Cultural Festival",
-        description="A celebration of diverse cultures through music, dance, and food.",
-        date=datetime(2025, 5, 15, 12, 0),
-        location="Kelvingrove",
-        category=cultural_category,
-        organiser=organiser
-    )
+    # Create 3 events per category
+    for category in categories:
+        for i in range(1, 4):
+            Event.objects.create(
+                title=f"{category.name} Event {i}",
+                description=f"Sample description for {category.name} Event {i}.",
+                date=datetime.now() + timedelta(days=random.randint(1, 20)),
+                location="University of Glasgow",
+                google_maps_link=gmaps_link,
+                organiser=random.choice(organisers),
+                category=category
+            )
 
-    event5 = Event.objects.create(
-        title="GameJam",
-        description="A fun day for code lovers to compete.",
-        date=datetime(2025, 5, 10, 14, 0),
-        location="Boyd Orr",
-        category=more_category,
-        organiser=organiser
-    )
-
-    # Users sign up for events
-    event1.attendees.add(user1, user2)
-    event2.attendees.add(user1)
-    event3.attendees.add(user2)
-    event4.attendees.add(user1, user2)
-    event5.attendees.add(user2)
-
-    # Create Comments
-    Comment.objects.create(user=user1, event=event1, comment="Excited for the match!")
-    Comment.objects.create(user=user2, event=event2, comment="Love jazz music!")
-    Comment.objects.create(user=user1, event=event3, comment="Hope to learn something new!")
-    Comment.objects.create(user=user2, event=event4, comment="Looking forward to experiencing different cultures.")
-    Comment.objects.create(user=user1, event=event5, comment="Great opportunity to work as a team!")
-
-    # Create QAForum Messages
-    QAForum.objects.create(user=user1, message_text="How do I participate in the football championship?")
-    QAForum.objects.create(user=user2, message_text="Are there any free tickets for Jazz Night?")
-    QAForum.objects.create(user=user1, message_text="Will the Mathematics Workshop include a Q&A session?")
-    QAForum.objects.create(user=user2, message_text="What kind of food will be available at the Cultural Festival?")
-    QAForum.objects.create(user=user1, message_text="Can I create my own team?")
-
-    print("Database populated successfully with Sport, Music, Academic, Cultural, and More categories.")
+    print("✅ Database populated successfully.")
 
 if __name__ == '__main__':
     populate()

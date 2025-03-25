@@ -14,8 +14,7 @@ Organiser Account
     {% for event in events %}
         <li>
             {{ event.title }} ({{ event.category.name }}) – {{ event.date|date:"Y-m-d H:i" }}
-            <br />
-            <a href="{% url 'webapp:edit_event' event.id %}">Edit</a> |
+            <a href="{% url 'webapp:edit_event' event.id %}">Edit</a>
             <a href="{% url 'webapp:delete_event' event.id %}">Delete</a>
         </li>
     {% endfor %}
@@ -31,6 +30,10 @@ Organiser Account
     {% for category in categories %}
         <li>
             <a href="{% url 'webapp:add_event' category.name %}">{{ category.name }}</a>
+            {% if event.id %}
+              <a href="{% url 'webapp:notify_users' event.id %}">Notify Users</a>
+            {% endif %}
+
 
         </li>
     {% endfor %}

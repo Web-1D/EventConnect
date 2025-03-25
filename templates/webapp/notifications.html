@@ -1,0 +1,32 @@
+{% extends 'webapp/base.html' %}
+{% block title_block %}Notifications{% endblock %}
+
+{% block body_block %}
+  <h2>Notifications</h2>
+  {% if notifications %}
+    <ul>
+        {% for note in notifications %}
+          <li>
+            {% if note.event %}
+              <a href="{% url 'webapp:event_detail' note.event.id %}">
+                <strong>From:</strong> {{ note.sender.username }}<br>
+                <strong>Message:</strong> {{ note.message }}<br>
+                <small>{{ note.timestamp|date:"Y-m-d H:i" }}</small>
+              </a>
+            {% else %}
+              <strong>From:</strong> {{ note.sender.username }}<br>
+              <strong>Message:</strong> {{ note.message }}<br>
+              <small>{{ note.timestamp|date:"Y-m-d H:i" }}</small><br>
+              <em>No event linked to this notification</em>
+            {% endif %}
+          </li>
+          <hr>
+        {% endfor %}
+
+
+
+    </ul>
+  {% else %}
+    <p>No notifications yet.</p>
+  {% endif %}
+{% endblock %}

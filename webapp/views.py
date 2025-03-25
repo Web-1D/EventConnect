@@ -1,12 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
-from webapp.models import User, Category, Event, Comment, QAForum
+from webapp.models import User, Category, Event, Comment, QAForum, Notification
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
-from webapp.forms import CategoryForm, EventForm, UserForm
+from webapp.forms import CategoryForm, EventForm, UserForm, QAForumForm, ReviewForm
 from django.contrib.auth.forms import AuthenticationForm
+from django.conf import settings
+from webapp.models import Notification, User, Review
 
 
 
@@ -25,7 +28,8 @@ def home(request):
         'all_categories': all_categories,
         'main_categories': main_categories,
         'other_categories': other_categories,
-        'events': events
+        'events': events,
+        'show_contact_button': True,
     }
 
     response = render(request, 'webapp/home.html', context=context_dict)
@@ -34,8 +38,48 @@ def home(request):
 def contact(request):
     return render(request, 'webapp/contact.html')
 
+@login_required
 def qa(request):
-    return render(request, 'webapp/qa.html')
+    form = QAForumForm()
+    messages = QAForum.objects.order_by('-timestamp')
+
+    if request.method == 'POST':
+        form = QAForumForm(request.POST)
+        if form.is_valid():
+            new_message = form.save(commit=False)
+            new_message.user = request.user
+            new_message.save()
+            return redirect('webapp:qa')
+        else:
+            print(form.errors)
+    return render(request, 'webapp/qa.html', {
+        'form': form,
+        'messages': messages
+    })
+
+
+@login_required
+def delete_message(request, message_id):
+    message = get_object_or_404(QAForum, id=message_id, user=request.user)
+    if request.method == 'POST':
+        message.delete()
+        return redirect('webapp:qa')
+    return render(request, 'webapp/confirm_delete.html', {'message': message})
+
+
+@login_required
+def edit_message(request, message_id):
+    message = get_object_or_404(QAForum, id=message_id, user=request.user)
+
+    if request.method == 'POST':
+        form = QAForumForm(request.POST, instance=message)
+        if form.is_valid():
+            form.save()
+            return redirect('webapp:qa')
+    else:
+        form = QAForumForm(instance=message)
+
+    return render(request, 'webapp/edit_message.html', {'form': form})
 
 def categories(request, category_name):
 
@@ -69,13 +113,26 @@ def add_category(request):
 
 
 def event_detail(request, event_id):
-    try:
-        event = Event.objects.get(id=event_id)
-    except Event.DoesNotExist:
-        return redirect('webapp:home')
+    event = get_object_or_404(Event, id=event_id)
+    reviews = Review.objects.filter(event=event).order_by('-timestamp')
 
-    context_dict = {'event': event}
-    return render(request, 'webapp/event_detail.html', context_dict)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            new_review.event = event
+            new_review.user = request.user
+            new_review.save()
+            return redirect('webapp:event_detail', event_id=event.id)
+    else:
+        form = ReviewForm()
+
+    return render(request, 'webapp/event_detail.html', {
+        'event': event,
+        'reviews': reviews,
+        'form': form,
+    })
+
 
 
 def event_comments(request, event_id):
@@ -219,7 +276,6 @@ def organiser_account(request):
 
 @login_required
 def add_event(request, category_name):
-    
     try:
         category = Category.objects.get(name=category_name)
     except Category.DoesNotExist:
@@ -236,15 +292,20 @@ def add_event(request, category_name):
             event.organiser = request.user
             event.save()
 
-            return redirect(reverse('webapp:categories',
-                                        args=[category.name]))
+            if form.cleaned_data.get('notify_users'):
+                for user in User.objects.filter(role='user'):
+                    Notification.objects.create(
+                        recipient=user,
+                        sender=request.user,
+                        message=f"New event: {event.title} was created in category {category.name}.",
+                        event=event,
+                    )
 
-        else:
-            print(form.errors)
+            return redirect(reverse('webapp:categories', args=[category.name]))
 
-            
     context_dict = {'form': form, 'category_name': category_name}
     return render(request, 'webapp/add_event.html', context_dict)
+
 
 
 @login_required
@@ -330,10 +391,13 @@ def search_event_redirect(request):
             return render(request, 'webapp/search_no_result.html', {'title': title})
 
 
+@login_required
+def notifications_view(request):
+    if request.user.role != 'user':
+        return HttpResponse("Access Denied")
 
-
-
-
+    notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
+    return render(request, 'webapp/notifications.html', {'notifications': notifications})
 
 
 

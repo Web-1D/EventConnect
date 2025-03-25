@@ -35,7 +35,13 @@ urlpatterns = [
     path('organiser_account/delete-event/<int:event_id>/', views.delete_event, name='delete_event'),
 
 
-    path('ajax/search-events/', views.search_events, name='search_events')
+    path('ajax/search-events/', views.search_events, name='search_events'),
+    path('notifications/', views.notifications_view, name='notifications'),
+
+    path('q&a/', views.qa, name='qa'),
+    path('q&a/edit/<int:message_id>/', views.edit_message, name='edit_message'),
+    path('q&a/delete/<int:message_id>/', views.delete_message, name='delete_message'),
+
 
 
 ]

@@ -58,6 +58,10 @@ $(document).ready(function () {
             {% if user.role == 'organiser' %}
                 <a href="{% url 'webapp:organiser_account' %}">Admin</a>
             {% endif %}
+            {% if user.role == 'user' %}
+              <a href="{% url 'webapp:notifications' %}">Notifications</a>
+            {% endif %}
+            <a href="{% url 'webapp:qa' %}">Q&A Forum</a>
             <a href="{% url 'webapp:logout' %}">Logout</a>
         {% else %}
             <a href="{% url 'webapp:login' %}">Login</a>
@@ -72,8 +76,9 @@ $(document).ready(function () {
     {% endblock %}
 
     <div class="bottomnav">
-        <a href="{% url 'webapp:qa' %}">Q&A Forum</a>
-        <a href="{% url 'webapp:contact' %}">Contact Us</a>
+        {% if show_contact_button %}
+             <a href="{% url 'webapp:contact' %}" class="btn btn-outline-info">Contact Us</a>
+        {% endif %}
     </div>
 
     {% block extra_scripts %}

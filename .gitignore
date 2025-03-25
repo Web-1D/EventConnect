@@ -417,3 +417,5 @@ FodyWeavers.xsd
 
 # ignore the sqlite
 *.sqlite3
+
+requirements.txt
