@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
@@ -34,6 +35,10 @@ class Event(models.Model):
     organiser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organised_events')
     attendees = models.ManyToManyField(User, related_name='attended_events', blank=True)
     event_image = models.ImageField(upload_to='event_images/', null=True, blank=True)
+
+    # Allows us to find recently added events
+    created = models.DateTimeField(auto_now_add=True)
+
     
     def __str__(self):
         return self.title

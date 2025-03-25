@@ -77,9 +77,8 @@ def populate():
         event_image="event_images/gamejam.jpg"
     )
 
-    # Users sign up for events
     event1.attendees.add(user1, user2)
-    event2.attendees.add(user1)
+    event2.attendees.add(user1, user2)
     event3.attendees.add(user2)
     event4.attendees.add(user1, user2)
     event5.attendees.add(user2)

@@ -6,15 +6,18 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from webapp.forms import CategoryForm, EventForm, UserForm
+from django.db.models import Count
 
 
 def home(request):
 
     category_list = Category.objects.all()
-    events = Event.objects.all().order_by('-date')
+    events = Event.objects.all().order_by('-created')
 
-    popular_events = Event.objects.all().order_by('-attendees')[:3]
-    recent_events = events[:3]  # Show 3 most recent events
+    # Had to use this due to attendees being a ManytoMany Field
+    # couldn't use basic orderby
+    popular_events = Event.objects.annotate(num_attendees=Count('attendees')).order_by('-num_attendees')[:3]
+    recent_events = events[:3] 
 
     context_dict = {'categories' : category_list, 'events': events, 'recent_events': recent_events, 'popular_events': popular_events}
 

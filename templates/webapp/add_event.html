@@ -18,7 +18,7 @@
 </h1>
 
 <div>
-    <form id="new_event_form" method="post" action="{% if event %}{% url 'webapp:edit_event' event.id %}{% else %}{% url 'webapp:add_event' %}{% endif %}">
+    <form id="new_event_form" method="post" enctype="multipart/form-data"  action="{% if event %}{% url 'webapp:edit_event' event.id %}{% else %}{% url 'webapp:add_event' %}{% endif %}">
         {% csrf_token %}
         {% for field in form %}
             <p>
