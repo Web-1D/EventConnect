@@ -27,6 +27,6 @@ urlpatterns = [
     path('organiser-login/', views.organiser_login, name='organiser_login'),
     path('organiser-account/', views.organiser_account, name='organiser_account'),
     path('organiser-account/add-event/', views.add_event, name='add_event'),
-    path('organiser-account/edit-event/<int:event_id>/', views.add_event, name='edit_event'),
+    path('organiser-account/edit-event/<int:event_id>/', views.edit_event, name='edit_event'),
     path('organiser-account/delete-event/<int:event_id>/', views.delete_event, name='delete_event'),
 ]

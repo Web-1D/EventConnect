@@ -225,8 +225,8 @@ def edit_event(request, event_id):
         if form.is_valid():
             form.save()
             return redirect(reverse('webapp:event', args=[event_id]))
-        else:
-            form = EventForm(instance=event)
+    else:
+        form = EventForm(instance=event)
 
     context_dict['form'] = form
 

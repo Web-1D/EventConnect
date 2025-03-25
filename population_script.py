@@ -6,6 +6,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'EventConnect.settings')
 django.setup()
 
 from webapp.models import Category, Event, Comment, QAForum, User
+from django.conf import settings
+
 
 User.objects.all().delete()
 Category.objects.all().delete()
@@ -101,3 +103,4 @@ def populate():
 
 if __name__ == '__main__':
     populate()
+
