@@ -22,6 +22,7 @@ urlpatterns = [
     path('event/<int:event_id>/sign-up/', views.event_signup, name='event_signup'),
     path('event/<int:event_id>/enable-notifications/', views.enable_notifications, name='enable_notifications'),
     path('event/<int:event_id>/add-comment/', views.add_comment, name='add_comment'),
+    path('my-events/', views.my_events, name='my_events'),
 
     # Organiser Views
     path('organiser-login/', views.organiser_login, name='organiser_login'),

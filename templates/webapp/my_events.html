@@ -1,0 +1,32 @@
+{% extends 'webapp/base.html' %}
+{% load static %}
+
+{% block title_block %}
+    My Signed Up Events
+{% endblock %}
+
+{% block body_block %}
+    <h1>You Have Signed Up For:</h1>
+
+    {% if events %}
+        <div class="content">
+            <div class="event-list">
+                {% for event in events %}
+                    <div class="event-card">
+                        <a href="{% url 'webapp:event' event.id %}">
+                            {% if event.event_image %}
+                                <img src="{{ event.event_image.url }}" alt="{{ event.title }}" style="width: 200px; height: 150px;">
+                            {% else %}
+                                <img src="{% static 'images/event_placeholder.png' %}" alt="Default Event Image" style="width: 200px; height: 150px;">
+                            {% endif %}
+                            <h2>{{ event.title }}</h2>
+                        </a>
+                        <p>🗓️ {{ event.date|date:"F d, Y" }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <p>You are not signed up for any events yet.</p>
+    {% endif %}
+{% endblock %}

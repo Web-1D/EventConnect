@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-{% load staticfiles %}
+{% load static %}
 
 <html>
 <head lang="en">
@@ -14,6 +14,7 @@
     {% if user.is_authenticated %}
     	<span>Welcome, {{ user.username }}!</span>
     	<a href="{% url 'webapp:logout' %}">Logout</a>
+		<a href="{% url 'webapp:my_events' %}">My Events</a>
 
     	{% if user.role == "organiser" %}
         	<a href="{% url 'webapp:organiser_account' %}">Organiser Dashboard</a>

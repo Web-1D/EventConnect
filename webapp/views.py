@@ -239,6 +239,14 @@ def delete_event(request, event_id):
     except Event.DoesNotExist:
         return HttpResponse("Event not found or permission not granted.")
 
+@login_required
+def my_events(request):
+
+    events = Event.objects.filter(attendees=request.user)
+
+    context = {'events': events,}
+    return render(request, 'webapp/my_events.html', context)
+
 
 
 
