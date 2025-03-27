@@ -9,55 +9,212 @@ django.setup()
 from webapp.models import User, Category, Event
 
 def populate():
-    # Clear existing data (opțional, doar pentru teste)
-    Event.objects.all().delete()
-    User.objects.filter(username__startswith="testuser").delete()
-    User.objects.filter(username__startswith="organiser").delete()
 
-    # Create categories if not already
-    category_names = ["Sports", "Music", "Academic", "Cultural", "More"]
-    categories = []
-    for name in category_names:
-        category, _ = Category.objects.get_or_create(name=name)
-        categories.append(category)
+    User.objects.all().delete()
+    Category.objects.all().delete()
+    Event.objects.all().delete()
+
+    # Create categories
+    sports_category = Category.objects.create(name="Sports")
+    music_category = Category.objects.create(name="Music")
+    academic_category = Category.objects.create(name="Academic")
+    cultural_category = Category.objects.create(name="Cultural")
+    more_category = Category.objects.create(name="More")
+
 
     # Create organisers
-    organisers = []
-    for i in range(1, 4):
-        user = User.objects.create_user(
-            username=f"organiser{i}",
-            password="organiserpass",
-            email=f"organiser{i}@test.com",
-            role="organiser"
-        )
-        organisers.append(user)
+    organiser1 = User.objects.create_user(username="sean", email="sean@example.com", password="test123", role="organiser")
+    organiser2 = User.objects.create_user(username="sinead", email="sinead@example.com", password="test123", role="organiser")
+    organiser3 = User.objects.create_user(username="daniel", email="daniel@example.com", password="test123", role="organiser")
+
 
     # Create normal users
-    for i in range(1, 6):
-        User.objects.create_user(
-            username=f"testuser{i}",
-            password="testpass",
-            email=f"user{i}@test.com",
-            role="user"
-        )
+    user1 = User.objects.create_user(username="costi", email="costi@example.com", password="test123", role="user")
+    user2 = User.objects.create_user(username="tanvika", email="tanvika@example.com", password="test123", role="user")
 
-    # Google Maps Embed Link
-    gmaps_link = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5836.714949869367!2d-4.292463482603151!3d55.86880718879993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d20af469b3%3A0xa3f0620b655e4983!2sUniversitatea%20din%20Glasgow!5e1!3m2!1sro!2suk!4v1742891391229!5m2!1sro!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    # Google Maps Embed Links
+    gmaps_garscube = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4473.387590807979!2d-4.318364316629771!3d55.902669570848374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845a06a45d773%3A0x242b6969206f81cb!2sGarscube%20Sports%20Complex!5e0!3m2!1sen!2suk!4v1743095839049!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_stevenson = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2892.828813602485!2d-4.285869337522604!3d55.87272128284913!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845cd61545955%3A0xc8fcf2b652b4fd5a!2sStevenson%20Building%2C%2077%20Oakfield%20Ave%2C%20Glasgow%20G12%208LT!5e0!3m2!1sen!2suk!4v1743096105749!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_qmu = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.3699996551773!2d-4.291395499999997!3d55.873596199999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845ce12aef097%3A0xe9f1db5b4c772ef!2sQueen%20Margaret%20Union!5e0!3m2!1sen!2suk!4v1743096205440!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_chapel = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.4869702074902!2d-4.2895274999999895!3d55.871567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d21ba12c8d%3A0x32b2b57eb58e2ab!2sUniversity%20Chapel!5e0!3m2!1sen!2suk!4v1743096299393!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_maths = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.4270038395325!2d-4.294484300000052!3d55.872607299999984!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845cfd066d839%3A0xeab86bed8f92f0d0!2sSchool%20of%20Mathematics%20and%20Statistics!5e0!3m2!1sen!2suk!4v1743096563618!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_kelvbuild = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.471256704001!2d-4.291647000000012!3d55.87183959999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48884596fcfe844b%3A0x83d9871dfac8a5c3!2sKelvin%20Building!5e0!3m2!1sen!2suk!4v1743100270865!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_kelvpark = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.6252134212345!2d-4.283389599999992!3d55.86916869999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d3252afce9%3A0x9ef923bf94072089!2sKelvingrove%20Park!5e0!3m2!1sen!2suk!4v1743096919679!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_kelvhotel = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.800042266781!2d-4.285721300000008!3d55.86613560000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d489c2075d%3A0x173d1b7141ef927!2sKelvingrove%20Hotel%20-%20Book%20Direct%20for%20Best%20Rates.%20We&#39;re%20cheaper%20than%20online%20travel%20agents.!5e0!3m2!1sen!2suk!4v1743096959396!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_jms = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.394469628919!2d-4.2924767!3d55.8731717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48884574f0008a73%3A0x5bfb31eedc4517b5!2sJames%20McCune%20Smith%20Learning%20Hub!5e0!3m2!1sen!2suk!4v1743099666530!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_boyd = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.37186156798!2d-4.292643299999999!3d55.87356390000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845ce39231b11%3A0xce4a79eafb2376a6!2sBoyd%20Orr%20Building!5e0!3m2!1sen!2suk!4v1743100641955!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_main = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.492525184611!2d-4.29068527734363!3d55.87147063128955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d2136e869f%3A0x1f4cdacdefe01c76!2sMain%20Building%2C%20Glasgow%20G12%208QQ!5e0!3m2!1sen!2suk!4v1743101221137!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
 
-    # Create 3 events per category
-    for category in categories:
-        for i in range(1, 4):
-            Event.objects.create(
-                title=f"{category.name} Event {i}",
-                description=f"Sample description for {category.name} Event {i}.",
-                date=datetime.now() + timedelta(days=random.randint(1, 20)),
-                location="University of Glasgow",
-                google_maps_link=gmaps_link,
-                organiser=random.choice(organisers),
-                category=category
-            )
+    # Sport events
+    event1 = Event.objects.create(
+        title="University Football Championship",
+        description="Annual university football tournament.",
+        date=datetime(2025, 10, 10, 16, 0),
+        location="Garscube Sports Complex",
+        category=sports_category,
+        google_maps_link=gmaps_garscube,
+        organiser=organiser2,
+        event_image="event_images/football.jpg"
+    )
 
-    print("✅ Database populated successfully.")
+    event2 = Event.objects.create(
+        title="University Woman's Rugby League Trophy",
+        description="Finals of the University Rugby League.",
+        date=datetime(2025, 10, 2, 16, 0),
+        location="Garscube Sports Complex",
+        category=sports_category,
+        google_maps_link=gmaps_garscube,
+        organiser=organiser1,
+        event_image="event_images/rugby.jpg"
+    )
+
+    event3 = Event.objects.create(
+        title="University Netball Finals",
+        description="Finals of the university netball tournament.",
+        date=datetime(2025, 11, 14, 15, 0),
+        location="Stevenson Building",
+        category=sports_category,
+        google_maps_link=gmaps_stevenson,
+        organiser=organiser1,
+        event_image="event_images/netball.jpg"
+    )
+
+    # Music events
+    event4 = Event.objects.create(
+        title="Jazz Night",
+        description="A night of jazz performances.",
+        date=datetime(2025, 6, 25, 19, 30),
+        location="QMU",
+        category=music_category,
+        google_maps_link=gmaps_qmu,
+        organiser=organiser3,
+        event_image="event_images/jazz.jpg"
+    )
+
+    event5 = Event.objects.create(
+        title="Open Mic Night",
+        description="Bring your instrument and perform!",
+        date=datetime(2025, 5, 24, 19, 0),
+        location="QMU",
+        category=music_category,
+        google_maps_link=gmaps_qmu,
+        organiser=organiser3,
+        event_image="event_images/mic.jpg"
+    )
+
+    event6 = Event.objects.create(
+        title="Choir Summer Performance",
+        description="The University Choir's annual summer performance.",
+        date=datetime(2025, 6, 28, 19, 0),
+        location="University Chapel",
+        category=music_category,
+        google_maps_link=gmaps_chapel,
+        organiser=organiser2,
+        event_image="event_images/choir.jpg"
+    )
+
+    # Academic events
+    event7 = Event.objects.create(
+        title="Mathematics Workshop",
+        description="A workshop on advanced calculus.",
+        date=datetime(2025, 4, 5, 10, 0),
+        location="Room 203, Maths and Stats Building",
+        category=academic_category,
+        google_maps_link=gmaps_maths,
+        organiser=organiser2,
+        event_image="event_images/maths.jpg"
+    )
+
+    event8 = Event.objects.create(
+        title="Physics Society Meetup",
+        description="Join us for discussion and pizza!",
+        date=datetime(2025, 4, 10, 18, 30),
+        location="Room 423, Kelvin Building",
+        category=academic_category,
+        google_maps_link=gmaps_kelvbuild,
+        organiser=organiser3,
+        event_image="event_images/physics.jpg"
+    )
+
+    event9 = Event.objects.create(
+        title="Philosophy Society Meetup",
+        description="A gathering of the philosophy society.",
+        date=datetime(2025, 4, 2, 19, 0),
+        location="QMU",
+        category=academic_category,
+        google_maps_link=gmaps_qmu,
+        organiser=organiser3,
+        event_image="event_images/philosophy.jpg"
+    )
+
+    # Cultural events
+    event10 = Event.objects.create(
+        title="Cultural Festival",
+        description="A celebration of diverse cultures through music, dance, and food.",
+        date=datetime(2025, 5, 15, 12, 0),
+        location="Kelvingrove Park",
+        category=cultural_category,
+        google_maps_link=gmaps_kelvpark,
+        organiser=organiser2,
+        event_image="event_images/culture.jpg"
+    )
+
+    event11 = Event.objects.create(
+        title="Gaelic Society Ball",
+        description="The Gaelic Society's Annual Ball.",
+        date=datetime(2025, 5, 10, 19, 0),
+        location="Kelvingrove Hotel",
+        category=cultural_category,
+        google_maps_link=gmaps_kelvhotel,
+        organiser=organiser2,
+        event_image="event_images/gaelic.jpg"
+    )
+
+    event12 = Event.objects.create(
+        title="Germany Society Film Viewing",
+        description="Watch a German film with free snacks.",
+        date=datetime(2025, 4, 5, 18, 30),
+        location="Room 408, JMS",
+        category=cultural_category,
+        google_maps_link=gmaps_jms,
+        organiser=organiser1,
+        event_image="event_images/germany.jpg"
+    )
+
+    event13 = Event.objects.create(
+        title="GameJam",
+        description="A fun day for code lovers to compete.",
+        date=datetime(2025, 5, 10, 14, 0),
+        location="706 Lab, Boyd Orr",
+        category=more_category,
+        google_maps_link=gmaps_boyd,
+        organiser=organiser3,
+        event_image="event_images/gamejam.jpg"
+    )
+
+    event14 = Event.objects.create(
+        title="Volunteers Fair",
+        description="Meet organisations and find a volunteer placement.",
+        date=datetime(2025, 10, 5, 11, 0),
+        location="University Main Building",
+        category=more_category,
+        google_maps_link=gmaps_main,
+        organiser=organiser2,
+        event_image="event_images/volunteer.jpg"
+    )
+
+    event15 = Event.objects.create(
+        title="Climate Change Talk",
+        description="An afternoon with climate experts.",
+        date=datetime(2025, 9, 23, 14, 30),
+        location="Room 602, JMS",
+        category=more_category,
+        google_maps_link=gmaps_jms,
+        organiser=organiser1,
+        event_image="event_images/climate.jpg"
+    )
+
+    print("Database populated successfully.")
 
 if __name__ == '__main__':
     populate()
