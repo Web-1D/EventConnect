@@ -17,8 +17,6 @@ venv/
 
 # Django
 db.sqlite3
-#/static/
-media/
 *.rsuser
 *.suo
 *.user
