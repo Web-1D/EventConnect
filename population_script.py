@@ -40,7 +40,7 @@ def populate():
     gmaps_maths = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.4270038395325!2d-4.294484300000052!3d55.872607299999984!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845cfd066d839%3A0xeab86bed8f92f0d0!2sSchool%20of%20Mathematics%20and%20Statistics!5e0!3m2!1sen!2suk!4v1743096563618!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
     gmaps_kelvbuild = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.471256704001!2d-4.291647000000012!3d55.87183959999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48884596fcfe844b%3A0x83d9871dfac8a5c3!2sKelvin%20Building!5e0!3m2!1sen!2suk!4v1743100270865!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
     gmaps_kelvpark = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.6252134212345!2d-4.283389599999992!3d55.86916869999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d3252afce9%3A0x9ef923bf94072089!2sKelvingrove%20Park!5e0!3m2!1sen!2suk!4v1743096919679!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
-    gmaps_kelvhotel = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.800042266781!2d-4.285721300000008!3d55.86613560000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d489c2075d%3A0x173d1b7141ef927!2sKelvingrove%20Hotel%20-%20Book%20Direct%20for%20Best%20Rates.%20We&#39;re%20cheaper%20than%20online%20travel%20agents.!5e0!3m2!1sen!2suk!4v1743096959396!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
+    gmaps_guu = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8952.480788557328!2d-4.291242800000047!3d55.8779296!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845cdf92cdf2d%3A0xd14847c3d4ae5e0a!2sGlasgow%20University%20Union!5e0!3m2!1sen!2suk!4v1743106279190!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
     gmaps_jms = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.394469628919!2d-4.2924767!3d55.8731717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48884574f0008a73%3A0x5bfb31eedc4517b5!2sJames%20McCune%20Smith%20Learning%20Hub!5e0!3m2!1sen!2suk!4v1743099666530!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
     gmaps_boyd = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.37186156798!2d-4.292643299999999!3d55.87356390000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845ce39231b11%3A0xce4a79eafb2376a6!2sBoyd%20Orr%20Building!5e0!3m2!1sen!2suk!4v1743100641955!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
     gmaps_main = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.492525184611!2d-4.29068527734363!3d55.87147063128955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d2136e869f%3A0x1f4cdacdefe01c76!2sMain%20Building%2C%20Glasgow%20G12%208QQ!5e0!3m2!1sen!2suk!4v1743101221137!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
@@ -163,9 +163,9 @@ def populate():
         title="Gaelic Society Ball",
         description="The Gaelic Society's Annual Ball.",
         date=datetime(2025, 5, 10, 19, 0),
-        location="Kelvingrove Hotel",
+        location="Glasgow University Union",
         category=cultural_category,
-        google_maps_link=gmaps_kelvhotel,
+        google_maps_link=gmaps_guu,
         organiser=organiser2,
         event_image="event_images/gaelic.jpg"
     )
