@@ -54,7 +54,8 @@ def populate():
                 location="University of Glasgow",
                 google_maps_link=gmaps_link,
                 organiser=random.choice(organisers),
-                category=category
+                category=category,
+                event_image="event_images/football.jpg"
             )
 
     print("✅ Database populated successfully.")

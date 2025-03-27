@@ -135,7 +135,9 @@ input[type="submit"]:hover {
 
 
 .event-card {
-  background: linear-gradient(135deg, #00fff7, #8e2de2);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: white;
   border-radius: 16px;
   padding: 1.5rem;
@@ -144,6 +146,7 @@ input[type="submit"]:hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   position: relative;
+  color: white;
   animation: pulse-glow-ariu 3s infinite ease-in-out;
 }
 
@@ -422,6 +425,7 @@ body.dark-mode .event-card p {
   margin-bottom: 2.5rem;
 }
 
+/* not using this anymore for better display */
 .event-list {
   list-style: none;
   padding: 0;

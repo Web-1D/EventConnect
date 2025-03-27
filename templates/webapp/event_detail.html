@@ -4,6 +4,11 @@
 {% block title_block %}{{ event.title }}{% endblock %}
 
 {% block body_block %}
+{% if event.event_image %}
+    <img src="{{ event.event_image.url }}" alt="No image" style="width:100%; max-height: 400px; object-fit: contain;">
+{% else %}
+    <p>No image available for this event.</p>
+{% endif %}
 <section class="event-detail">
   <h2 class="event-title">{{ event.title }}</h2>
   <div class="event-meta">

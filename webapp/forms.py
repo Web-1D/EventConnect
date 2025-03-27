@@ -18,7 +18,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'description', 'date', 'location', 'google_maps_link', 'notify_users']
+        fields = ['title', 'description', 'date', 'location', 'google_maps_link', 'event_image', 'notify_users']
         labels = {
             'title': 'Title',
             'description': 'Description',
