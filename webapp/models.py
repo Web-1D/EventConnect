@@ -43,6 +43,11 @@ class Event(models.Model):
         null=True,
     )
 
+    event_image = models.ImageField(upload_to='event_images/', null=True, blank=True)
+
+    # Allows us to find recently added events
+    created = models.DateTimeField(auto_now_add=True)
+
     def clean(self):
         if '<iframe' in self.location:
             match = re.search(r'src="([^"]+)"', self.location)

@@ -10,6 +10,7 @@ from webapp.forms import CategoryForm, EventForm, UserForm, QAForumForm, ReviewF
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from webapp.models import Notification, User, Review
+from django.db.models import Count
 
 
 def home(request):
@@ -18,7 +19,12 @@ def home(request):
 
     main_categories = all_categories.filter(name__in=predefined)
 
-    events = Event.objects.all()
+    events = Event.objects.all().order_by('-created')
+
+    # Had to use this due to attendees being a ManytoMany Field
+    # couldn't use basic orderby
+    popular_events = Event.objects.annotate(num_attendees=Count('attendees')).order_by('-num_attendees')[:3]
+    recent_events = events[:3] 
 
     context_dict = {
         'categories': all_categories,
@@ -130,6 +136,7 @@ def event_detail(request, event_id):
         'event': event,
         'reviews': reviews,
         'form': form,
+        'event_image_url': event.event_image.url if event.event_image else None
     })
 
 

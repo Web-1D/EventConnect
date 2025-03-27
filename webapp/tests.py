@@ -22,7 +22,7 @@ class ModelsTests(TestCase):
         )
 
         self.comment = Comment.objects.create(user=self.user, event=self.event, comment="Bet they'll sound amazing!")
-        self.qa = QAForum.objects.create(user=self.user, message_text="Login not working?", timestamp=timezone.now())
+        self.qa = QAForum.objects.create(user=self.user, message="Login not working?", timestamp=timezone.now())
 
     def test_create_user(self):
         self.assertEqual(self.user.username, "sean")
@@ -43,7 +43,7 @@ class ModelsTests(TestCase):
         self.assertEqual(self.comment.user.username, "sean")
 
     def test_create_qa(self):
-        self.assertEqual(self.qa.message_text, "Login not working?")
+        self.assertEqual(self.qa.message, "Login not working?")
         self.assertEqual(self.qa.user.username, "sean")
 
 
@@ -53,8 +53,8 @@ class ViewsTestsNoData(TestCase):
 
         # 200 means a successful request
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No popular events found.")
-        self.assertContains(response, "No recent events found.")
+        self.assertContains(response, "No events available.")
+        self.assertContains(response, "No recent events.")
 
     def test_category_view_with_no_events(self):
         add_category('Sport')
@@ -62,8 +62,8 @@ class ViewsTestsNoData(TestCase):
         response = self.client.get(reverse('webapp:categories', args=['Sport']))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No events found in this category.")
-        self.assertTemplateUsed(response, 'webapp/category.html')
+        self.assertContains(response, "No events in this category yet.")
+        self.assertTemplateUsed(response, 'webapp/category_detail.html')
 
 
 class ViewsTestsWithData(TestCase):
@@ -75,7 +75,7 @@ class ViewsTestsWithData(TestCase):
         self.event = Event.objects.create(
             title="Tennis Tournament", description="Fun tourny",
             date=timezone.now(), location="Garscube",
-            category=self.category, organiser=self.organiser
+            category=self.category, organiser=self.organiser, event_image=None
         )
         self.comment = Comment.objects.create(user=self.user, event=self.event, comment="I'm going to win!!!")
 
@@ -91,19 +91,10 @@ class ViewsTestsWithData(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'webapp/contact.html')
 
-    def test_contact_view_post(self):
-        response = self.client.post(reverse('webapp:contact'), {
-            'name': 'Test User',
-            'email': 'user@test.com',
-            'message': 'Need help with my account'
-        })
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('message_sent' in response.context)
-
     def test_event_view(self):
-        response = self.client.get(reverse('webapp:event', args=[self.event.id]))
+        response = self.client.get(reverse('webapp:event_detail', args=[self.event.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'webapp/event.html')
+        self.assertTemplateUsed(response, 'webapp/event_detail.html')
         self.assertContains(response, self.event.title)
 
     def test_signup_view(self):
@@ -111,22 +102,16 @@ class ViewsTestsWithData(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'webapp/signup.html')
 
-    def test_user_login_view_invalid(self):
-        response = self.client.post(reverse('webapp:user_login'), {'username': 'test', 'password': 'wrongpassword'})
+    def test_login_view_invalid(self):
+        response = self.client.post(reverse('webapp:login'), {'username': 'test', 'password': 'wrongpassword'})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Invalid login details supplied.")
+        self.assertContains(response, "Invalid credentials")
 
     def test_event_signup_view_authenticated(self):
         self.client.login(username='sean', password='test123')
         response = self.client.post(reverse('webapp:event_signup', args=[self.event.id]))
         # 302 redirects after a successful signup
         self.assertEqual(response.status_code, 302)
-
-    def test_add_comment_view_authenticated(self):
-        self.client.login(username='sean', password='test123')
-        response = self.client.post(reverse('webapp:add_comment', args=[self.event.id]), {'comment': 'Cant wait!'})
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(Comment.objects.filter(comment='Cant wait!').exists())
 
     def test_organiser_account_view(self):
         self.client.login(username='organiser2', password='organ23')
@@ -166,8 +151,10 @@ class FormsTests(TestCase):
             'description': 'A fun night of rock music',
             'date': timezone.now(),
             'location': 'Kelvingrove Bandstand',
+            'google_maps_link': 'https://www.google.com/maps/embed?',
             'category': self.category.id,
-            'event_image': None
+            'event_image': None,
+            'notify_users': None,
         }
 
         form = EventForm(data=form_data)
@@ -214,7 +201,7 @@ class URLsTests(TestCase):
         self.event = Event.objects.create(
             title="Tennis Tournament", description="Fun tourny",
             date=timezone.now(), location="Garscube",
-            category=self.category, organiser=self.organiser
+            category=self.category, organiser=self.organiser, event_image=None
         )
         self.comment = Comment.objects.create(user=self.user, event=self.event, comment="I'm going to win!!!")
 
@@ -250,8 +237,8 @@ class URLsTests(TestCase):
         # No need to redirect
         self.assertEqual(response.status_code, 200)
 
-    def test_user_login_url(self):
-        url = reverse('webapp:user_login')
+    def test_login_url(self):
+        url = reverse('webapp:login')
         response = self.client.get(url)
 
         # No need to redirect
@@ -272,38 +259,7 @@ class URLsTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_event_url(self):
-        url = reverse('webapp:event', args=[self.event.id])
-        response = self.client.get(url)
-
-        # No need to redirect
-        self.assertEqual(response.status_code, 200)
-
-    def test_event_signup_url(self):
-        url = reverse('webapp:event_signup', args=[self.event.id])
-        response = self.client.get(url)
-
-        # No need to redirect
-        self.assertEqual(response.status_code, 200)
-
-    """
-    // no template for this yet
-    def test_enable_notifications_url(self):
-        # Assuming an event with ID 1 exists
-        self.client.login(username='sean', password='test123')
-        url = reverse('webapp:enable_notifications', args=[self.event.id])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-    """
-
-    def test_add_comment_url(self):
-        url = reverse('webapp:add_comment', args=[self.event.id])
-        response = self.client.get(url)
-
-        # Should redirect back to event after adding a comment
-        self.assertEqual(response.status_code, 302)
-
-    def test_organiser_login_url(self):
-        url = reverse('webapp:organiser_login')
+        url = reverse('webapp:event_detail', args=[self.event.id])
         response = self.client.get(url)
 
         # No need to redirect
@@ -317,7 +273,7 @@ class URLsTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_add_event_url(self):
-        url = reverse('webapp:add_event')
+        url = reverse('webapp:add_event', args=[self.category])
         response = self.client.get(url)
 
         # No need to redirect

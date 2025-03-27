@@ -45,174 +45,18 @@ def populate():
     gmaps_boyd = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.37186156798!2d-4.292643299999999!3d55.87356390000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845ce39231b11%3A0xce4a79eafb2376a6!2sBoyd%20Orr%20Building!5e0!3m2!1sen!2suk!4v1743100641955!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
     gmaps_main = """https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2238.492525184611!2d-4.29068527734363!3d55.87147063128955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x488845d2136e869f%3A0x1f4cdacdefe01c76!2sMain%20Building%2C%20Glasgow%20G12%208QQ!5e0!3m2!1sen!2suk!4v1743101221137!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"""
 
-    # Sport events
-    event1 = Event.objects.create(
-        title="University Football Championship",
-        description="Annual university football tournament.",
-        date=datetime(2025, 10, 10, 16, 0),
-        location="Garscube Sports Complex",
-        category=sports_category,
-        google_maps_link=gmaps_garscube,
-        organiser=organiser2,
-        event_image="event_images/football.jpg"
-    )
-
-    event2 = Event.objects.create(
-        title="University Woman's Rugby League Trophy",
-        description="Finals of the University Rugby League.",
-        date=datetime(2025, 10, 2, 16, 0),
-        location="Garscube Sports Complex",
-        category=sports_category,
-        google_maps_link=gmaps_garscube,
-        organiser=organiser1,
-        event_image="event_images/rugby.jpg"
-    )
-
-    event3 = Event.objects.create(
-        title="University Netball Finals",
-        description="Finals of the university netball tournament.",
-        date=datetime(2025, 11, 14, 15, 0),
-        location="Stevenson Building",
-        category=sports_category,
-        google_maps_link=gmaps_stevenson,
-        organiser=organiser1,
-        event_image="event_images/netball.jpg"
-    )
-
-    # Music events
-    event4 = Event.objects.create(
-        title="Jazz Night",
-        description="A night of jazz performances.",
-        date=datetime(2025, 6, 25, 19, 30),
-        location="QMU",
-        category=music_category,
-        google_maps_link=gmaps_qmu,
-        organiser=organiser3,
-        event_image="event_images/jazz.jpg"
-    )
-
-    event5 = Event.objects.create(
-        title="Open Mic Night",
-        description="Bring your instrument and perform!",
-        date=datetime(2025, 5, 24, 19, 0),
-        location="QMU",
-        category=music_category,
-        google_maps_link=gmaps_qmu,
-        organiser=organiser3,
-        event_image="event_images/mic.jpg"
-    )
-
-    event6 = Event.objects.create(
-        title="Choir Summer Performance",
-        description="The University Choir's annual summer performance.",
-        date=datetime(2025, 6, 28, 19, 0),
-        location="University Chapel",
-        category=music_category,
-        google_maps_link=gmaps_chapel,
-        organiser=organiser2,
-        event_image="event_images/choir.jpg"
-    )
-
-    # Academic events
-    event7 = Event.objects.create(
-        title="Mathematics Workshop",
-        description="A workshop on advanced calculus.",
-        date=datetime(2025, 4, 5, 10, 0),
-        location="Room 203, Maths and Stats Building",
-        category=academic_category,
-        google_maps_link=gmaps_maths,
-        organiser=organiser2,
-        event_image="event_images/maths.jpg"
-    )
-
-    event8 = Event.objects.create(
-        title="Physics Society Meetup",
-        description="Join us for discussion and pizza!",
-        date=datetime(2025, 4, 10, 18, 30),
-        location="Room 423, Kelvin Building",
-        category=academic_category,
-        google_maps_link=gmaps_kelvbuild,
-        organiser=organiser3,
-        event_image="event_images/physics.jpg"
-    )
-
-    event9 = Event.objects.create(
-        title="Philosophy Society Meetup",
-        description="A gathering of the philosophy society.",
-        date=datetime(2025, 4, 2, 19, 0),
-        location="QMU",
-        category=academic_category,
-        google_maps_link=gmaps_qmu,
-        organiser=organiser3,
-        event_image="event_images/philosophy.jpg"
-    )
-
-    # Cultural events
-    event10 = Event.objects.create(
-        title="Cultural Festival",
-        description="A celebration of diverse cultures through music, dance, and food.",
-        date=datetime(2025, 5, 15, 12, 0),
-        location="Kelvingrove Park",
-        category=cultural_category,
-        google_maps_link=gmaps_kelvpark,
-        organiser=organiser2,
-        event_image="event_images/culture.jpg"
-    )
-
-    event11 = Event.objects.create(
-        title="Gaelic Society Ball",
-        description="The Gaelic Society's Annual Ball.",
-        date=datetime(2025, 5, 10, 19, 0),
-        location="Kelvingrove Hotel",
-        category=cultural_category,
-        google_maps_link=gmaps_kelvhotel,
-        organiser=organiser2,
-        event_image="event_images/gaelic.jpg"
-    )
-
-    event12 = Event.objects.create(
-        title="Germany Society Film Viewing",
-        description="Watch a German film with free snacks.",
-        date=datetime(2025, 4, 5, 18, 30),
-        location="Room 408, JMS",
-        category=cultural_category,
-        google_maps_link=gmaps_jms,
-        organiser=organiser1,
-        event_image="event_images/germany.jpg"
-    )
-
-    event13 = Event.objects.create(
-        title="GameJam",
-        description="A fun day for code lovers to compete.",
-        date=datetime(2025, 5, 10, 14, 0),
-        location="706 Lab, Boyd Orr",
-        category=more_category,
-        google_maps_link=gmaps_boyd,
-        organiser=organiser3,
-        event_image="event_images/gamejam.jpg"
-    )
-
-    event14 = Event.objects.create(
-        title="Volunteers Fair",
-        description="Meet organisations and find a volunteer placement.",
-        date=datetime(2025, 10, 5, 11, 0),
-        location="University Main Building",
-        category=more_category,
-        google_maps_link=gmaps_main,
-        organiser=organiser2,
-        event_image="event_images/volunteer.jpg"
-    )
-
-    event15 = Event.objects.create(
-        title="Climate Change Talk",
-        description="An afternoon with climate experts.",
-        date=datetime(2025, 9, 23, 14, 30),
-        location="Room 602, JMS",
-        category=more_category,
-        google_maps_link=gmaps_jms,
-        organiser=organiser1,
-        event_image="event_images/climate.jpg"
-    )
+    # Create 3 events per category
+    for category in categories:
+        for i in range(1, 4):
+            Event.objects.create(
+                title=f"{category.name} Event {i}",
+                description=f"Sample description for {category.name} Event {i}.",
+                date=datetime.now() + timedelta(days=random.randint(1, 20)),
+                location="University of Glasgow",
+                google_maps_link=gmaps_link,
+                organiser=random.choice(organisers),
+                category=category
+            )
 
     print("Database populated successfully.")
 

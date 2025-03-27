@@ -18,10 +18,10 @@
   {% endif %}
 
   {% if events %}
-    <div class="event-list">
+    <div class="event-grid">
       {% for event in events %}
         <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
-          <div class="event-card">
+          <div class="event-card" style="background-image: url('{% if event.event_image %}{{ event.event_image.url }}{% endif %}');">
             <h3>{{ event.title }}</h3>
             <p><strong>Date:</strong> {{ event.date|date:"Y-m-d H:i" }}</p>
             <p><strong>Location:</strong> {{ event.location }}</p>

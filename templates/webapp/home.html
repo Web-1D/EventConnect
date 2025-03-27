@@ -37,7 +37,7 @@ Home
     <div class="event-grid">
       {% for event in events|slice:":4" %}
         <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
-          <div class="event-card">
+          <div class="event-card" style="background-image: url('{% if event.event_image %}{{ event.event_image.url }}{% endif %}');">
             <h4>{{ event.title }}</h4>
             <p><strong>{{ event.date|date:"Y-m-d H:i" }}</strong></p>
             <p class="event-location">{{ event.location }}</p>
@@ -56,7 +56,7 @@ Home
     <div class="event-grid">
       {% for event in events|slice:":4" %}
         <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
-          <div class="event-card">
+          <div class="event-card" style="background-image: url('{% if event.event_image %}{{ event.event_image.url }}{% endif %}');">
             <h4>{{ event.title }}</h4>
             <p><strong>{{ event.date|date:"Y-m-d H:i" }}</strong></p>
             <p class="event-location">{{ event.location }}</p>
