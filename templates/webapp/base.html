@@ -21,7 +21,9 @@ $(document).ready(function () {
         if (query.length > 0) {
             $.ajax({
                 url: "{% url 'webapp:autocomplete_events' %}",
-                data: { 'term': query },
+                data: { 'term': query,
+                        'category' : $('#category-select').val()
+                },
                 dataType: 'json',
                 success: function (data) {
                     let resultsDiv = $("#autocomplete-results");
@@ -45,6 +47,9 @@ $(document).ready(function () {
     $(document).on("click", ".suggestion-item", function () {
         $("#searchInput").val($(this).text());
         $("#autocomplete-results").hide();
+    });
+    $('#category-select').on('change', function () {
+        $('#searchInput').trigger('input');
     });
 });
 </script>

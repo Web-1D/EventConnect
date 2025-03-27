@@ -7,7 +7,10 @@ No Event Found
 {% block body_block %}
 <h2>Search Result</h2>
 
-<p>Sorry, this page doesnt exist "<strong>{{ title }}</strong>".</p>
+<p>
+  Sorry, we couldn't find any event titled "<strong>{{ title }}</strong>"
+  {% if category != "All Categories" %} in the category "<strong>{{ category }}</strong>" {% endif %}.
+</p>
 
 <p>Try <a href="{% url 'webapp:home' %}">other events</a>.</p>
 {% endblock %}

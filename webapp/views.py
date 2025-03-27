@@ -19,7 +19,6 @@ def home(request):
     predefined = ['Sports', 'Music', 'Academic', 'Cultural']
 
     main_categories = all_categories.filter(name__in=predefined)
-    other_categories = all_categories.exclude(name__in=predefined)
 
     events = Event.objects.all()
 
@@ -27,7 +26,6 @@ def home(request):
         'categories': all_categories,
         'all_categories': all_categories,
         'main_categories': main_categories,
-        'other_categories': other_categories,
         'events': events,
         'show_contact_button': True,
     }
@@ -354,10 +352,17 @@ def ajax_search_events(request):
 def autocomplete_events(request):
     if request.is_ajax():
         term = request.GET.get('term', '')
-        events = Event.objects.filter(title__icontains=term)[:10]
-        results = [{'title': event.title} for event in events]
+        category = request.GET.get('category', '')
+        events = Event.objects.filter(title__icontains=term)
+
+        if category:
+            events = events.filter(category__name__iexact=category)
+
+        results = [{'title': event.title} for event in events[:10]]
         return JsonResponse(results, safe=False)
+
     return JsonResponse([], safe=False)
+
 
 
 def search_events(request):
@@ -384,11 +389,20 @@ def search_events(request):
 def search_event_redirect(request):
     if request.method == 'GET':
         title = request.GET.get('search_term', '').strip()
+        category_name = request.GET.get('category_filter', '').strip()
         try:
-            event = Event.objects.get(title__iexact=title)
+            if category_name:
+                event = Event.objects.get(title__iexact=title, category__name__iexact=category_name)
+            else:
+                event = Event.objects.get(title__iexact=title)
+
             return redirect('webapp:event_detail', event_id=event.id)
+
         except Event.DoesNotExist:
-            return render(request, 'webapp/search_no_result.html', {'title': title})
+            return render(request, 'webapp/search_no_result.html', {
+                'title': title,
+                'category': category_name or "All Categories",
+            })
 
 
 @login_required
@@ -401,6 +415,13 @@ def notifications_view(request):
 
 
 
+def more_categories(request):
+    predefined = ['Sports', 'Music', 'Academic', 'Cultural']
+    other_categories = Category.objects.exclude(name__in=predefined)
+
+    return render(request, 'webapp/more_categories.html', {
+        'other_categories': other_categories,
+    })
 
 
 
