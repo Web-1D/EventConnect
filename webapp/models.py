@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     ROLE_CHOICES = [
@@ -16,9 +16,10 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.role})"
-    
+
     def is_organiser(self):
         return self.role == 'organiser'
+
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -55,24 +56,25 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     comment = models.TextField()
-    
+
     def __str__(self):
-        return f'Comment by {self.user.username} on {self.event.title}'
+        return f"Comment by {self.user.username} on {self.event.title}"
+
 
 class QAForum(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
-        return f'Message by {self.user.username} at {self.timestamp}'
+        return f"Message by {self.user.username} at {self.timestamp}"
 
 
 class Notification(models.Model):
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_notifications')
     message = models.TextField()
-    event = models.ForeignKey('Event', on_delete=models.CASCADE, null=True, blank=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 
@@ -88,4 +90,3 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review by {self.user.username} on {self.event.title}"
-

@@ -6,40 +6,49 @@ Organiser Account
 {% endblock %}
 
 {% block body_block %}
-<h2>Welcome, {{ user.username }}!</h2>
+<section class="organiser-container">
+  <h2 class="section-title">Welcome, {{ user.username }}!</h2>
 
-<h3>Your Events:</h3>
-{% if events %}
-    <ul>
-    {% for event in events %}
+  <div class="section-block">
+    <h3>Your Events:</h3>
+    {% if events %}
+      <ul class="event-list">
+        {% for event in events %}
+          <li class="event-item clickable-card">
+            <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
+              <span>
+                <strong>{{ event.title }}</strong> ({{ event.category.name }}) – {{ event.date|date:"Y-m-d H:i" }}
+              </span>
+            </a>
+            <span class="action-buttons">
+              <a href="{% url 'webapp:edit_event' event.id %}" class="btn-secondary">Edit</a>
+              <a href="{% url 'webapp:delete_event' event.id %}" class="btn-danger">Delete</a>
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty-msg">You haven't created any events yet.</p>
+    {% endif %}
+  </div>
+
+  <hr />
+
+  <div class="section-block">
+    <h3>Add New Event to a Category:</h3>
+    <ul class="category-links">
+      {% for category in categories %}
         <li>
-            {{ event.title }} ({{ event.category.name }}) – {{ event.date|date:"Y-m-d H:i" }}
-            <a href="{% url 'webapp:edit_event' event.id %}">Edit</a>
-            <a href="{% url 'webapp:delete_event' event.id %}">Delete</a>
+          <a href="{% url 'webapp:add_event' category.name %}" class="category-chip">{{ category.name }}</a>
         </li>
-    {% endfor %}
+      {% endfor %}
     </ul>
-{% else %}
-    <p>You haven't created any events yet</p>
-{% endif %}
+  </div>
 
-<hr />
-
-<h3>Add New Event to a Category:</h3>
-<ul>
-    {% for category in categories %}
-        <li>
-            <a href="{% url 'webapp:add_event' category.name %}">{{ category.name }}</a>
-            {% if event.id %}
-              <a href="{% url 'webapp:notify_users' event.id %}">Notify Users</a>
-            {% endif %}
-
-
-        </li>
-    {% endfor %}
-</ul>
-
-<p><a href="{% url 'webapp:add_category' %}"><strong>Add a New Category</strong></a></p>
-
-
+  <div class="section-block">
+    <p>
+      <a href="{% url 'webapp:add_category' %}" class="btn-primary">+ Add a New Category</a>
+    </p>
+  </div>
+</section>
 {% endblock %}

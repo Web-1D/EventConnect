@@ -4,33 +4,33 @@
 {% block title_block %}Q&A Forum{% endblock %}
 
 {% block body_block %}
-<div class="container mt-5">
-    <h2 class="mb-4">Q&A Forum</h2>
+<div class="chat-wrapper">
+  <h2 class="chat-title">💬 Q&A Forum</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Send</button>
-    </form>
+  <form method="post" class="qa-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary" id="send-button">Send</button>
+  </form>
 
-    <div class="list-group mt-4">
-        {% for message in messages %}
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="mb-1">{{ message.user.username }}</h5>
-                    <p class="mb-1">{{ message.message }}</p>
-                    <small class="text-muted">{{ message.timestamp|date:"d M Y, H:i" }}</small>
-                </div>
-                {% if user == message.user %}
-                    <div class="btn-group">
-                        <a href="{% url 'webapp:edit_message' message.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="{% url 'webapp:delete_message' message.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
-                    </div>
-                {% endif %}
-            </div>
-        {% empty %}
-            <p>No messages yet. Be the first to post!</p>
-        {% endfor %}
-    </div>
+  <div class="chat-box">
+    {% for message in messages %}
+      <div class="chat-bubble {% if user == message.user %}me{% else %}other{% endif %}">
+        <div class="bubble-meta">{{ message.user.username }}</div>
+        <div class="bubble-text">{{ message.message }}</div>
+
+        <div class="bubble-footer">
+          {{ message.timestamp|date:"d M, H:i" }}
+        </div>
+
+        {% if user == message.user %}
+          <div class="bubble-actions">
+            <a href="{% url 'webapp:edit_message' message.id %}" class="bubble-btn">Edit</a>
+            <a href="{% url 'webapp:delete_message' message.id %}" class="bubble-btn">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

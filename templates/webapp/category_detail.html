@@ -6,34 +6,32 @@
 {% endblock %}
 
 {% block body_block %}
-<h2>Events in {{ category.name }}</h2>
+<section class="category-detail">
+  <h2 class="section-title">Events in <span class="highlight">{{ category.name }}</span></h2>
 
-{% if user.is_authenticated and user.role == 'organiser' %}
-    <p>
-        <a href="{% url 'webapp:add_event' category.name %}">
-            ➕ Add New Event to {{ category.name }}
+  {% if user.is_authenticated and user.role == 'organiser' %}
+    <div class="action-area">
+      <a href="{% url 'webapp:add_event' category.name %}" class="btn">
+        ➕ Add New Event to {{ category.name }}
+      </a>
+    </div>
+  {% endif %}
+
+  {% if events %}
+    <div class="event-list">
+      {% for event in events %}
+        <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
+          <div class="event-card">
+            <h3>{{ event.title }}</h3>
+            <p><strong>Date:</strong> {{ event.date|date:"Y-m-d H:i" }}</p>
+            <p><strong>Location:</strong> {{ event.location }}</p>
+            <p><strong>Organiser:</strong> {{ event.organiser.username }}</p>
+          </div>
         </a>
-    </p>
-{% endif %}
-
-{% if events %}
-    <ul>
-        {% for event in events %}
-            <li>
-                <a href="{% url 'webapp:event_detail' event.id %}">
-                    <strong>{{ event.title }}</strong>
-                </a>
-                <br>
-                Date: {{ event.date|date:"Y-m-d H:i" }}<br>
-                Location: {{ event.location }}<br>
-                Organiser: {{ event.organiser.username }}
-            </li>
-            <hr>
-        {% endfor %}
-    </ul>
-{% else %}
+      {% endfor %}
+    </div>
+  {% else %}
     <p>No events in this category yet.</p>
-{% endif %}
-
-<p><a href="{% url 'webapp:home' %}">← Back to Home</a></p>
+  {% endif %}
+</section>
 {% endblock %}

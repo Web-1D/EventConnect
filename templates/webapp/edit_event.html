@@ -6,13 +6,17 @@ Edit Event
 {% endblock %}
 
 {% block body_block %}
-<h2>Edit Event</h2>
+<section class="form-section">
+  <h2 class="section-title">Edit Event</h2>
 
-<form method="post">
+  <form method="post" class="form-card">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save Changes</button>
-</form>
+    <button type="submit" class="btn-primary full-width">Save Changes</button>
+  </form>
 
-<p><a href="{% url 'webapp:organiser_account' %}">← Back to Admin</a></p>
+  <p class="back-link">
+    <a href="{% url 'webapp:organiser_account' %}">← Back to your Admin</a>
+  </p>
+</section>
 {% endblock %}

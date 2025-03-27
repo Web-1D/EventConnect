@@ -12,9 +12,7 @@ from django.conf import settings
 from webapp.models import Notification, User, Review
 
 
-
 def home(request):
-
     all_categories = Category.objects.all()
     predefined = ['Sports', 'Music', 'Academic', 'Cultural']
 
@@ -33,8 +31,10 @@ def home(request):
     response = render(request, 'webapp/home.html', context=context_dict)
     return response
 
+
 def contact(request):
     return render(request, 'webapp/contact.html')
+
 
 @login_required
 def qa(request):
@@ -79,8 +79,8 @@ def edit_message(request, message_id):
 
     return render(request, 'webapp/edit_message.html', {'form': form})
 
-def categories(request, category_name):
 
+def categories(request, category_name):
     context_dict = {}
 
     try:
@@ -91,8 +91,9 @@ def categories(request, category_name):
     except Category.DoesNotExist:
         context_dict['category'] = None
         context_dict['events'] = None
-    
+
     return render(request, 'webapp/category_detail.html', context_dict)
+
 
 @login_required
 def add_category(request):
@@ -132,9 +133,7 @@ def event_detail(request, event_id):
     })
 
 
-
 def event_comments(request, event_id):
-
     context_dict = {}
 
     try:
@@ -145,7 +144,7 @@ def event_comments(request, event_id):
         context_dict['event'] = None
         context_dict['comments'] = None
         return HttpResponse("Event not found or permission not granted.")
-    
+
     return render(request, 'webapp/event_comments.html', context_dict)
 
 
@@ -200,9 +199,9 @@ def user_logout(request):
     logout(request)
     return redirect(reverse('webapp:home'))
 
+
 @login_required
 def event_signup(request, event_id):
-
     context_dict = {}
 
     try:
@@ -214,14 +213,14 @@ def event_signup(request, event_id):
 
     if request.method == 'POST':
         event.attendees.add(request.user)
-        
+
         return redirect(reverse('webapp:event_detail', args=[event_id]))
 
     return render(request, 'webapp/event_signup.html', context_dict)
 
+
 @login_required
 def add_comment(request, event_id):
-
     context_dict = {}
 
     try:
@@ -235,16 +234,16 @@ def add_comment(request, event_id):
         message = request.POST.get('comment')
         if message:
             Comment.objects.create(user=request.user, event=event, comment=message)
-            
+
             return redirect(reverse('webapp:event_comments', args=[event_id]))
         else:
             return HttpResponse("Comment may not be blank.")
-    
+
     return render(request, 'webapp.add_comment.html', context_dict)
+
 
 @login_required
 def enable_notifications(request, event_id):
-
     context_dict = {}
 
     try:
@@ -255,7 +254,7 @@ def enable_notifications(request, event_id):
         return HttpResponse("Event not found.")
 
     ## adding to a list of users who want notifications?
-    
+
     return render(request, 'webapp/enable_notifications.html', context_dict)
 
 
@@ -268,7 +267,7 @@ def organiser_account(request):
     return render(request, 'webapp/organiser_account.html', {
         'events': events,
         'categories': categories,
-        'user' : request.user,
+        'user': request.user,
     })
 
 
@@ -305,7 +304,6 @@ def add_event(request, category_name):
     return render(request, 'webapp/add_event.html', context_dict)
 
 
-
 @login_required
 def edit_event(request, event_id):
     context_dict = {}
@@ -330,15 +328,12 @@ def edit_event(request, event_id):
 
 @login_required
 def delete_event(request, event_id):
-
     try:
         event = Event.objects.get(id=event_id, organiser=request.user)
         event.delete()
         return redirect(reverse('webapp:organiser_account'))
     except Event.DoesNotExist:
         return HttpResponse("Event not found or permission not granted.")
-
-
 
 
 def ajax_search_events(request):
@@ -362,7 +357,6 @@ def autocomplete_events(request):
         return JsonResponse(results, safe=False)
 
     return JsonResponse([], safe=False)
-
 
 
 def search_events(request):
@@ -414,7 +408,6 @@ def notifications_view(request):
     return render(request, 'webapp/notifications.html', {'notifications': notifications})
 
 
-
 def more_categories(request):
     predefined = ['Sports', 'Music', 'Academic', 'Cultural']
     other_categories = Category.objects.exclude(name__in=predefined)
@@ -424,7 +417,29 @@ def more_categories(request):
     })
 
 
+@login_required
+def register_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.user.role == 'user':
+        event.attendees.add(request.user)
+    return redirect('webapp:event_detail', event_id=event.id)
 
+
+@login_required
+def unregister_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.user.role == 'user':
+        event.attendees.remove(request.user)
+    return redirect('webapp:event_detail', event_id=event.id)
+
+
+@login_required
+def my_events(request):
+    if request.user.role != 'user':
+        return redirect('webapp:home')
+
+    events = request.user.attended_events.order_by('date')
+    return render(request, 'webapp/my_events.html', {'events': events})
 
 
 

@@ -9,16 +9,16 @@ Organiser Account
 
 <h3>Your Events:</h3>
 {% if events %}
-    <ul>
+  <ul>
     {% for event in events %}
-        <li>
-            <a href="{% url 'webapp:event_detail' event.id %}">{{ event.title }}</a>
-            — {{ event.date }} @ {{ event.location }}
-        </li>
+      <li>
+        <a href="{% url 'webapp:event_detail' event.id %}">{{ event.title }}</a>
+        — {{ event.date }} @ {{ event.location }}
+      </li>
     {% endfor %}
-    </ul>
+  </ul>
 {% else %}
-    <p>You haven't created any events yet</p>
+  <p>You haven't created any events yet</p>
 {% endif %}
 
 <hr>

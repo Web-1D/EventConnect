@@ -5,32 +5,17 @@ Add Event
 {% endblock %}
 
 {% block body_block %}
-<h1>Add a New Event to "{{ category_name }}"</h1>
+<section class="form-section">
+  <h2 class="section-title">Add Event to Category: {{ category_name|title }}</h2>
 
-<form id="new_event_form" method="post" action="{% url 'webapp:add_event' category_name=category_name %}">
+  <form method="post" action="" class="form-card">
     {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-primary full-width">Create Event</button>
+  </form>
 
-    {% for hidden in form.hidden_fields %}
-        {{ hidden }}
-    {% endfor %}
-
-    <div style="max-width: 600px;">
-        {% for field in form.visible_fields %}
-            <div style="margin-bottom: 15px;">
-                <label for="{{ field.id_for_label }}"><strong>{{ field.label }}</strong></label><br>
-                {{ field }}
-                {% if field.help_text %}
-                    <small style="color: #555;">{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
-                    <div style="color: red;">{{ error }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-
-    <input type="submit" value="Create Event" />
-</form>
-
-<p><a href="{% url 'webapp:organiser_account' %}">← Back to your account</a></p>
+  <p class="back-link">
+    <a href="{% url 'webapp:organiser_account' %}">← Back to your dashboard</a>
+  </p>
+</section>
 {% endblock %}
