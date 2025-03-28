@@ -4,37 +4,39 @@
 {% block title_block %}Notifications{% endblock %}
 
 {% block body_block %}
-<div class="notifications-container">
-  <h2 class="section-title">🔔 Notifications</h2>
+  <div class="notification-wrapper">
+    <h2 class="notification-title">Your Notifications</h2>
 
-  {% if notifications %}
-    <div class="notification-grid">
-      {% for note in notifications %}
-        {% with forloop.counter0 as index %}
+    {% if notifications %}
+      <div class="notification-box">
+        {% for note in notifications %}
           {% if note.event %}
-            <a href="{% url 'webapp:event_detail' note.event.id %}" class="notification-card color-{{ index|divisibleby:"5" }}">
-              <div class="notif-header">
-                <span class="notif-from">{{ note.sender.username }}</span>
-                <span class="notif-time">{{ note.timestamp|date:"d M, H:i" }}</span>
+            <a href="{% url 'webapp:event_detail' note.event.id %}" class="notification-link">
+              <div class="notification-bubble hoverable">
+                <div class="bubble-meta">
+                  From: <strong>{{ note.sender.username }}</strong>
+                </div>
+                <div class="bubble-text">{{ note.message }}</div>
+                <div class="bubble-footer">
+                  {{ note.timestamp|date:"d M, H:i" }}
+                </div>
               </div>
-              <div class="notif-message">{{ note.message }}</div>
-              <div class="notif-footer">📌 Click to view event</div>
             </a>
           {% else %}
-            <div class="notification-card color-{{ index|divisibleby:"5" }}">
-              <div class="notif-header">
-                <span class="notif-from">{{ note.sender.username }}</span>
-                <span class="notif-time">{{ note.timestamp|date:"d M, H:i" }}</span>
+            <div class="notification-bubble">
+              <div class="bubble-meta">
+                From: <strong>{{ note.sender.username }}</strong>
               </div>
-              <div class="notif-message">{{ note.message }}</div>
-              <div class="notif-footer text-muted">No event linked</div>
+              <div class="bubble-text">{{ note.message }}</div>
+              <div class="bubble-footer">
+                {{ note.timestamp|date:"d M, H:i" }}
+              </div>
             </div>
           {% endif %}
-        {% endwith %}
-      {% endfor %}
-    </div>
-  {% else %}
-    <p>No notifications yet.</p>
-  {% endif %}
-</div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="no-notifications">You have no notifications yet.</p>
+    {% endif %}
+  </div>
 {% endblock %}

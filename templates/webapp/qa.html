@@ -4,33 +4,31 @@
 {% block title_block %}Q&A Forum{% endblock %}
 
 {% block body_block %}
-<div class="chat-wrapper">
-  <h2 class="chat-title">💬 Q&A Forum</h2>
+<div class="qa-container">
+  <h2>Q&A Forum</h2>
 
   <form method="post" class="qa-form">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary" id="send-button">Send</button>
+    {{ form.message }}
+    <button type="submit" class="qa-send-btn">Send</button>
   </form>
 
   <div class="chat-box">
-    {% for message in messages %}
-      <div class="chat-bubble {% if user == message.user %}me{% else %}other{% endif %}">
-        <div class="bubble-meta">{{ message.user.username }}</div>
-        <div class="bubble-text">{{ message.message }}</div>
+  {% for message in messages %}
+    <div class="chat-bubble">
+      <div class="bubble-meta">{{ message.user.username }}</div>
+      <div class="bubble-text">{{ message.message }}</div>
+      <div class="bubble-footer">{{ message.timestamp|date:"d M, H:i" }}</div>
 
-        <div class="bubble-footer">
-          {{ message.timestamp|date:"d M, H:i" }}
+      {% if user == message.user %}
+        <div class="bubble-actions">
+          <a href="{% url 'webapp:edit_message' message.id %}">Edit</a>
+          <a href="{% url 'webapp:delete_message' message.id %}">Delete</a>
         </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
 
-        {% if user == message.user %}
-          <div class="bubble-actions">
-            <a href="{% url 'webapp:edit_message' message.id %}" class="bubble-btn">Edit</a>
-            <a href="{% url 'webapp:delete_message' message.id %}" class="bubble-btn">Delete</a>
-          </div>
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
 </div>
 {% endblock %}

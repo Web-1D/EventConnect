@@ -328,3 +328,132 @@ textarea {
   justify-content: flex-start;
 }
 
+.chat-box {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.chat-bubble {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1rem;
+  background-color: var(--card-bg-secondary);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.bubble-meta {
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 0.3rem;
+}
+
+.bubble-text {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.bubble-footer {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.bubble-actions {
+  margin-top: 0.3rem;
+}
+
+.bubble-actions a {
+  font-size: 0.85rem;
+  margin-right: 10px;
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.bubble-actions a:hover {
+  text-decoration: underline;
+}
+
+
+.notification-wrapper {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.notification-title {
+  font-size: 1.6rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+}
+
+.notification-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notification-bubble {
+  background-color: var(--card-bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.notification-bubble .bubble-meta {
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.notification-bubble .bubble-text {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.notification-bubble .bubble-footer {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.no-notifications {
+  text-align: center;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.notification-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.notification-bubble.hoverable:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.01);
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+
+.event-detail-image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+  margin: 1rem 0;
+  object-fit: cover;
+}
+.event-image-wrapper {
+  text-align: center;
+}
+.event-meta p {
+  margin-bottom: 8px;
+}
+.event-actions {
+  margin-top: 1rem;
+}
