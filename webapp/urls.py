@@ -18,7 +18,6 @@ urlpatterns = [
 
     # Event Categories
     path('categories/<str:category_name>/', views.categories, name='categories'),
-    path('more-categories/', views.more_categories, name='more_categories'),
 
     # Event Details and Actions
     path('event/<int:event_id>/', views.event_detail, name='event_detail'),
@@ -27,6 +26,8 @@ urlpatterns = [
     path('event/<int:event_id>/enable-notifications/', views.enable_notifications, name='enable_notifications'),
     path('event/<int:event_id>/register/', views.register_event, name='register_event'),
     path('event/<int:event_id>/unregister/', views.unregister_event, name='unregister_event'),
+    path('more-events/', views.more_events, name='more_events'),
+
 
     # Search and Autocomplete
     path('ajax/search-events/', views.search_events, name='search_events'),

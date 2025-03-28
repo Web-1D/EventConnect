@@ -403,6 +403,17 @@ def more_categories(request):
         'other_categories': other_categories,
     })
 
+def more_events(request):
+    predefined = ['Sports', 'Music', 'Academic', 'Cultural']
+    other_categories = Category.objects.exclude(name__in=predefined)
+    events = Event.objects.filter(category__in=other_categories).order_by('-date')
+
+    return render(request, 'webapp/more_events.html', {
+        'events': events,
+        'title': 'More Events'
+    })
+
+
 
 @login_required
 def register_event(request, event_id):

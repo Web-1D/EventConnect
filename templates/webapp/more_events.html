@@ -1,0 +1,27 @@
+{% extends 'webapp/base.html' %}
+
+{% block title_block %}More Events{% endblock %}
+
+{% block body_block %}
+<section class="events-section">
+  <h3>{{ title }}</h3>
+  {% if events %}
+    <div class="event-grid">
+      {% for event in events %}
+        <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
+          <div class="event-card">
+            {% if event.image %}
+              <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-image">
+            {% endif %}
+            <h4>{{ event.title }}</h4>
+            <p><strong>{{ event.date|date:"Y-m-d H:i" }}</strong></p>
+            <p class="event-location">{{ event.location }}</p>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No events found.</p>
+  {% endif %}
+</section>
+{% endblock %}

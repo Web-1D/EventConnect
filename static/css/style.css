@@ -126,7 +126,7 @@ textarea {
   border: 1px solid var(--border-color);
   transition: box-shadow 0.3s ease, transform 0.2s ease;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
   height: 100%;
 }

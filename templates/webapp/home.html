@@ -31,8 +31,8 @@
   <h3>Popular Events</h3>
   {% if popular_events %}
     <div class="event-grid">
-  {% for event in popular_events %}
-    <div class="event-card">
+      {% for event in popular_events %}
+        <div class="event-card">
           <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
             {% if event.image %}
               <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-image">
@@ -44,11 +44,11 @@
         </div>
       {% endfor %}
     </div>
-
   {% else %}
     <p>No popular events available.</p>
   {% endif %}
 </section>
+
 
 <section class="events-section">
   <h3>Recently Added</h3>
@@ -73,6 +73,7 @@
 </section>
 
 
+
 <section class="category-section">
   <h3>Main Categories</h3>
   <div class="category-list">
@@ -81,9 +82,10 @@
         <div class="category-chip">{{ category.name|title }}</div>
       </a>
     {% endfor %}
+  <a href="{% url 'webapp:more_events' %}" class="category-chip-link">
+      <div class="category-chip">More</div>
+  </a>
   </div>
-  <div class="more-categories-link">
-    <a href="{% url 'webapp:more_categories' %}">More</a>
-  </div>
+
 </section>
 {% endblock %}
