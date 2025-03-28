@@ -13,6 +13,7 @@
 {% if user.is_authenticated and user.role == "organiser" %}
 <!-- Show these links when the user is logged in as organiser -->
 
+<<<<<<< Updated upstream
 <a href="{% url 'webapp:logout' %}">Logout</a>
 <a href="{% url 'webapp:add_event' %}">Add New Event</a>
 {% elif user.is_authenticated %}   
@@ -28,6 +29,32 @@
 <!-- Outside the conditional statements, ALWAYS show -->
 
 <!-- Removed Search as no view matching it -->
+=======
+<body >
+
+<div class="navbar-wave">
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <defs>
+            <linearGradient id="animatedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ff00cc">
+                    <animate attributeName="stop-color" values="#ff00cc;#00fff7;#3333ff;#ff00cc" dur="8s" repeatCount="indefinite" />
+                </stop>
+                <stop offset="100%" stop-color="#00fff7">
+                    <animate attributeName="stop-color" values="#00fff7;#3333ff;#ff00cc;#00fff7" dur="8s" repeatCount="indefinite" />
+                </stop>
+            </linearGradient>
+        </defs>
+        <path fill="url(#animatedGradient)" fill-opacity="1">
+            <animate attributeName="d" dur="10s" repeatCount="indefinite"
+                values="
+                    M0,160 C480,200 960,120 1  440,180 L1440,0 L0,0 Z;
+                    M0,180 C480,120 960,200 1440,160 L1440,0 L0,0 Z;
+                    M0,160 C480,200 960,120 1440,180 L1440,0 L0,0 Z
+                "
+            />
+        </path>
+    </svg>
+>>>>>>> Stashed changes
 
 <a href="{% url 'webapp:home' %}">Home</a>
 </div>
