@@ -10,15 +10,25 @@
     <p><strong>Date:</strong> {{ event.date|date:"Y-m-d H:i" }}</p>
     <p><strong>Location:</strong> {{ event.location }}</p>
     <p><strong>Description:</strong> {{ event.description }}</p>
+
+        {% if event.image %}
+            <div class="event-image">
+              <img src="{{ event.image.url }}" alt="Event image"
+                style="max-width: 400px; border-radius: 10px; margin-top: 10px;">
+            </div>
+        {% endif %}
+
+
     <p><strong>Category:</strong>
       <a href="{% url 'webapp:categories' event.category.name %}" class="category-link">
         {{ event.category.name }}
       </a>
     </p>
   </div>
+
   {% if event.location %}
   <div class="map-container">
-    <h3>📍 Location Preview</h3>
+    <h3>Location Preview</h3>
     <iframe
       width="100%" height="400" frameborder="0" style="border:0; border-radius: 8px;"
       src="{{ event.google_maps_link|add:'&output=embed' }}" allowfullscreen>
@@ -50,25 +60,25 @@
   {% endif %}
 {% endif %}
 
-<section class="reviews-section">
-  <h3>📝 Reviews</h3>
-  <div class="reviews-list" id="reviews-list">
-    {% for review in reviews %}
-    <div class="review-item">
-      <strong>{{ review.user.username }}</strong>
-      <span class="timestamp">({{ review.timestamp|date:"Y-m-d H:i" }})</span>
-      <p>{{ review.message }}</p>
+<section class="comments-section">
+  <h3>💬 Comments</h3>
+  <div class="comments-list" id="comments-list">
+    {% for comment in comments %}
+    <div class="comment-item">
+      <strong>{{ comment.user.username }}</strong>
+      <span class="timestamp">({{ comment.timestamp|date:"Y-m-d H:i" }})</span>
+      <p>{{ comment.message }}</p>
     </div>
     {% endfor %}
   </div>
 
   {% if user.is_authenticated and user.role == 'user' %}
-  <div class="review-form">
-    <h4>Leave a Review</h4>
-    <form method="post" id="review-form">
+  <div class="comment-form">
+    <h4>Leave a Comment</h4>
+    <form method="post" id="comment-form">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit" class="btn-primary">Submit Review</button>
+      <button type="submit" class="btn-primary">Submit Comment</button>
     </form>
   </div>
   {% endif %}
@@ -79,7 +89,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   $(document).ready(function () {
-    $('#review-form').on('submit', function (e) {
+    $('#comment-form').on('submit', function (e) {
       e.preventDefault();
 
       const message = $('#id_message').val().trim();
@@ -96,16 +106,16 @@
         },
         success: function (response) {
           if (response.success) {
-            const reviewHtml = `
-              <div class="review-item">
+            const commentHtml = `
+              <div class="comment-item">
                 <strong>{{ user.username }}</strong>
                 <span class="timestamp">(just now)</span>
                 <p>${message}</p>
               </div>`;
-            $('#reviews-list').prepend(reviewHtml);
+            $('#comments-list').prepend(commentHtml);
             $('#id_message').val('');
           } else {
-            alert(response.error || 'Review not saved.');
+            alert(response.error || 'Comment not saved.');
           }
         },
         error: function () {

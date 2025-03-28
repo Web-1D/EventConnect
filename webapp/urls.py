@@ -18,7 +18,6 @@ urlpatterns = [
 
     # Event Categories
     path('categories/<str:category_name>/', views.categories, name='categories'),
-    path('organiser_account/add-category/', views.add_category, name='add_category'),
     path('more-categories/', views.more_categories, name='more_categories'),
 
     # Event Details and Actions

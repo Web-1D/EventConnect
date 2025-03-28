@@ -1,144 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     {% load staticfiles %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title_block %}EventConnect{% endblock %}</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Rubik&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="light-mode">
+<body>
 
-<div class="navbar-wave">
-    <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
-        <defs>
-            <linearGradient id="animatedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#ff00cc">
-                    <animate attributeName="stop-color" values="#ff00cc;#00fff7;#3333ff;#ff00cc" dur="8s" repeatCount="indefinite" />
-                </stop>
-                <stop offset="100%" stop-color="#00fff7">
-                    <animate attributeName="stop-color" values="#00fff7;#3333ff;#ff00cc;#00fff7" dur="8s" repeatCount="indefinite" />
-                </stop>
-            </linearGradient>
-        </defs>
-        <path fill="url(#animatedGradient)" fill-opacity="1">
-            <animate attributeName="d" dur="10s" repeatCount="indefinite"
-                values="
-                    M0,160 C480,200 960,120 1440,180 L1440,0 L0,0 Z;
-                    M0,180 C480,120 960,200 1440,160 L1440,0 L0,0 Z;
-                    M0,160 C480,200 960,120 1440,180 L1440,0 L0,0 Z
-                "
-            />
-        </path>
-    </svg>
-
-    <div class="navbar-content-inside">
-        <a href="{% url 'webapp:home' %}" class="logo">🌟 EventConnect</a>
-
-        <div class="nav-group">
-            <div class="nav-links">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'webapp:home' %}">Home</a>
-                    {% if user.role == 'organiser' %}
-                        <a href="{% url 'webapp:organiser_account' %}">Admin</a>
-                    {% endif %}
-                    {% if user.role == 'user' %}
-                        <a href="{% url 'webapp:notifications' %}">Notifications</a>
-                        <a href="{% url 'webapp:my_events' %}">My Events</a>
-                    {% endif %}
-                    <a href="{% url 'webapp:qa' %}">Q&A</a>
-                    <a href="{% url 'webapp:logout' %}">Logout</a>
-                {% else %}
-                    <a href="{% url 'webapp:login' %}">Login</a>
-                    <a href="{% url 'webapp:signup' %}">Sign Up</a>
-                {% endif %}
-                <button id="theme-toggle" class="theme-toggle">🌓</button>
-                <button ></button>
-            </div>
-        </div>
-    </div>
+<div class="topnav">
+    <a href="{% url 'webapp:home' %}">Home</a>
+    {% if user.is_authenticated %}
+        {% if user.role == 'organiser' %}
+            <a href="{% url 'webapp:organiser_account' %}">Admin</a>
+        {% endif %}
+        {% if user.role == 'user' %}
+            <a href="{% url 'webapp:notifications' %}">Notifications</a>
+            <a href="{% url 'webapp:my_events' %}">My Events</a>
+        {% endif %}
+        <a href="{% url 'webapp:qa' %}">Q&A</a>
+        <a href="{% url 'webapp:logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'webapp:login' %}">Login</a>
+        <a href="{% url 'webapp:signup' %}">Sign Up</a>
+    {% endif %}
 </div>
 
 <main class="container">
     {% block body_block %}{% endblock %}
 </main>
 
-<footer class="footer">
+<div class="bottomnav">
     {% if show_contact_button %}
-        <a href="{% url 'webapp:contact' %}" class="contact-button">📬 Contact Us</a>
+        <a href="{% url 'webapp:contact' %}">Contact Us</a>
     {% endif %}
-</footer>
+</div>
 
+{% block extra_scripts %}
 <script>
-$(document).ready(function () {
-    $("#searchInput").on("input", function () {
-        let query = $(this).val();
+    $(document).ready(function () {
+        $("#searchInput").on("input", function () {
+            let query = $(this).val();
 
-        if (query.length > 0) {
-            $.ajax({
-                url: "{% url 'webapp:autocomplete_events' %}",
-                data: {
-                    'term': query,
-                    'category': $('#category-select').val()
-                },
-                dataType: 'json',
-                success: function (data) {
-                    let resultsDiv = $("#autocomplete-results");
-                    resultsDiv.empty();
+            if (query.length > 0) {
+                $.ajax({
+                    url: "{% url 'webapp:autocomplete_events' %}",
+                    data: {
+                        'term': query,
+                        'category': $('#category-select').val()
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        let resultsDiv = $("#autocomplete-results");
+                        resultsDiv.empty();
 
-                    if (data.length > 0) {
-                        data.forEach(function (item) {
-                            resultsDiv.append('<div class="suggestion-item" style="padding: 5px; cursor: pointer;">' + item.title + '</div>');
-                        });
-                        resultsDiv.show();
-                    } else {
-                        resultsDiv.hide();
+                        if (data.length > 0) {
+                            data.forEach(function (item) {
+                                resultsDiv.append('<div class="suggestion-item" style="padding: 5px; cursor: pointer;">' + item.title + '</div>');
+                            });
+                            resultsDiv.show();
+                        } else {
+                            resultsDiv.hide();
+                        }
                     }
-                }
-            });
-        } else {
+                });
+            } else {
+                $("#autocomplete-results").hide();
+            }
+        });
+
+        $(document).on("click", ".suggestion-item", function () {
+            $("#searchInput").val($(this).text());
             $("#autocomplete-results").hide();
-        }
-    });
+        });
 
-    $(document).on("click", ".suggestion-item", function () {
-        $("#searchInput").val($(this).text());
-        $("#autocomplete-results").hide();
+        $('#category-select').on('change', function () {
+            $('#searchInput').trigger('input');
+        });
     });
-
-    $('#category-select').on('change', function () {
-        $('#searchInput').trigger('input');
-    });
-});
-
-const toggle = document.getElementById('theme-toggle');
-const body = document.body;
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-    body.classList.remove('light-mode', 'dark-mode');
-    body.classList.add(savedTheme);
-}
-toggle.addEventListener('click', () => {
-    if (body.classList.contains('light-mode')) {
-        body.classList.remove('light-mode');
-        body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark-mode');
-    } else {
-        body.classList.remove('dark-mode');
-        body.classList.add('light-mode');
-        localStorage.setItem('theme', 'light-mode');
-    }
-});
 </script>
-
-{% block extra_scripts %}{% endblock %}
+{% endblock %}
 
 </body>
 </html>

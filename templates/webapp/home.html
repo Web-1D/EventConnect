@@ -1,9 +1,7 @@
 {% extends 'webapp/base.html' %}
 {% load staticfiles %}
 
-{% block title_block %}
-Home
-{% endblock %}
+{% block title_block %}Home{% endblock %}
 
 {% block body_block %}
 <div class="welcome-msg">
@@ -19,71 +17,73 @@ Home
   <form method="GET" action="{% url 'webapp:search_event_redirect' %}" class="search-form">
     <input type="text" id="searchInput" name="search_term" placeholder="Search for events..." autocomplete="off">
     <div id="autocomplete-results" class="autocomplete-box"></div>
-
     <select name="category_filter" id="category-select">
       <option value="">All Categories</option>
       {% for category in all_categories %}
         <option value="{{ category.name }}">{{ category.name }}</option>
       {% endfor %}
     </select>
-
     <button type="submit">Search</button>
   </form>
 </section>
 
 <section class="events-section">
   <h3>Popular Events</h3>
-  {% if events %}
+  {% if popular_events %}
     <div class="event-grid">
-      {% for event in events|slice:":4" %}
-        <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
-          <div class="event-card">
+  {% for event in popular_events %}
+    <div class="event-card">
+          <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
+            {% if event.image %}
+              <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-image">
+            {% endif %}
             <h4>{{ event.title }}</h4>
             <p><strong>{{ event.date|date:"Y-m-d H:i" }}</strong></p>
             <p class="event-location">{{ event.location }}</p>
-          </div>
-        </a>
+          </a>
+        </div>
       {% endfor %}
     </div>
+
   {% else %}
-    <p>No events available.</p>
+    <p>No popular events available.</p>
   {% endif %}
 </section>
 
 <section class="events-section">
   <h3>Recently Added</h3>
-  {% if events %}
+  {% if recent_events %}
     <div class="event-grid">
-      {% for event in events|slice:":4" %}
-        <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
-          <div class="event-card">
+      {% for event in recent_events %}
+        <div class="event-card">
+          <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
+            {% if event.image %}
+              <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-image">
+            {% endif %}
             <h4>{{ event.title }}</h4>
             <p><strong>{{ event.date|date:"Y-m-d H:i" }}</strong></p>
             <p class="event-location">{{ event.location }}</p>
-          </div>
-        </a>
+          </a>
+        </div>
       {% endfor %}
     </div>
   {% else %}
-    <p>No recent events.</p>
+    <p>No recent events available.</p>
   {% endif %}
 </section>
+
 
 <section class="category-section">
   <h3>Main Categories</h3>
   <div class="category-list">
     {% for category in main_categories %}
       <a href="{% url 'webapp:categories' category_name=category.name %}" class="category-chip-link">
-        <div class="category-chip">
-          {{ category.name|title }}
-        </div>
+        <div class="category-chip">{{ category.name|title }}</div>
       </a>
     {% endfor %}
   </div>
   <div class="more-categories-link">
-    <a href="{% url 'webapp:more_categories' %}">View More Categories →</a>
+    <a href="{% url 'webapp:more_categories' %}">More</a>
   </div>
 </section>
 {% endblock %}
-
-

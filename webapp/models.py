@@ -42,6 +42,7 @@ class Event(models.Model):
         blank=True,
         null=True,
     )
+    image = models.ImageField(upload_to='event_images/', blank=True, null=True)
 
     def clean(self):
         if '<iframe' in self.location:
@@ -82,11 +83,12 @@ class Notification(models.Model):
         return f"To {self.recipient.username} from {self.sender.username}"
 
 
-class Review(models.Model):
+class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Review by {self.user.username} on {self.event.title}"
+        return f"Comment by {self.user.username} on {self.event.title}"
+

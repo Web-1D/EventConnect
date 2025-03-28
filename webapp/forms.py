@@ -1,5 +1,6 @@
 from django import forms
-from webapp.models import User, Category, Event, QAForum, Review
+from webapp.models import User, Category, Event, QAForum, Comment
+from django.forms import ClearableFileInput
 
 
 class CategoryForm(forms.ModelForm):
@@ -18,13 +19,14 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'description', 'date', 'location', 'google_maps_link', 'notify_users']
+        fields = ['title', 'description', 'date', 'location', 'google_maps_link', 'image', 'notify_users']
         labels = {
             'title': 'Title',
             'description': 'Description',
             'date': 'Date and Time (YYYY-MM-DD HH:MM)',
             'location': 'Location',
             'google_maps_link': 'EMBED Google Maps Link',
+            'image': 'Event Image',
         }
         help_texts = {
             'title': 'Enter the event title',
@@ -32,6 +34,9 @@ class EventForm(forms.ModelForm):
             'date': 'Format: 2025-03-22 18:30',
             'location': 'Enter the address of the location',
             'google_maps_link': 'Paste the EMBED Google Maps',
+        }
+        widgets = {
+            'image': ClearableFileInput(),
         }
 
     def clean_google_maps_link(self):
@@ -72,14 +77,14 @@ class QAForumForm(forms.ModelForm):
         }
 
 
-class ReviewForm(forms.ModelForm):
+class CommentForm(forms.ModelForm):
     class Meta:
-        model = Review
+        model = Comment
         fields = ['message']
         widgets = {
             'message': forms.Textarea(attrs={
                 'rows': 3,
-                'placeholder': 'Leave a review...',
+                'placeholder': 'Write a comment...',
                 'style': 'width: 100%; padding: 10px;',
             }),
         }

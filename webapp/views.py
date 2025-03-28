@@ -6,17 +6,20 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
-from webapp.forms import CategoryForm, EventForm, UserForm, QAForumForm, ReviewForm
+from webapp.forms import CategoryForm, EventForm, UserForm, QAForumForm, CommentForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
-from webapp.models import Notification, User, Review
+from webapp.models import Notification, User, Comment
+from django.db.models import Count
+
 
 
 def home(request):
     all_categories = Category.objects.all()
     predefined = ['Sports', 'Music', 'Academic', 'Cultural']
-
     main_categories = all_categories.filter(name__in=predefined)
+    popular_events = Event.objects.annotate(num_attendees=Count('attendees')).order_by('-num_attendees')[:4]
+    recent_events = Event.objects.order_by('-date')[:4]
 
     events = Event.objects.all()
 
@@ -26,6 +29,8 @@ def home(request):
         'main_categories': main_categories,
         'events': events,
         'show_contact_button': True,
+        'popular_events': popular_events,
+        'recent_events': recent_events,
     }
 
     response = render(request, 'webapp/home.html', context=context_dict)
@@ -95,42 +100,27 @@ def categories(request, category_name):
     return render(request, 'webapp/category_detail.html', context_dict)
 
 
-@login_required
-def add_category(request):
-    if request.user.role != 'organiser':
-        return HttpResponse("You are not authorized to add categories")
-
-    form = CategoryForm()
-
-    if request.method == 'POST':
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('webapp:organiser_account')
-
-    return render(request, 'webapp/add_category.html', {'form': form})
-
-
 def event_detail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    reviews = Review.objects.filter(event=event).order_by('-timestamp')
+    comments = Comment.objects.filter(event=event).order_by('-timestamp')
 
     if request.method == 'POST':
-        form = ReviewForm(request.POST)
+        form = CommentForm(request.POST)
         if form.is_valid():
-            new_review = form.save(commit=False)
-            new_review.event = event
-            new_review.user = request.user
-            new_review.save()
+            new_comment = form.save(commit=False)
+            new_comment.event = event
+            new_comment.user = request.user
+            new_comment.save()
             return redirect('webapp:event_detail', event_id=event.id)
     else:
-        form = ReviewForm()
+        form = CommentForm()
 
     return render(request, 'webapp/event_detail.html', {
         'event': event,
-        'reviews': reviews,
+        'comments': comments,
         'form': form,
     })
+
 
 
 def event_comments(request, event_id):
@@ -278,11 +268,8 @@ def add_event(request, category_name):
     except Category.DoesNotExist:
         return HttpResponse("Category does not exist.")
 
-    form = EventForm()
-
     if request.method == 'POST':
-        form = EventForm(request.POST)
-
+        form = EventForm(request.POST, request.FILES)
         if form.is_valid():
             event = form.save(commit=False)
             event.category = category
@@ -299,31 +286,31 @@ def add_event(request, category_name):
                     )
 
             return redirect(reverse('webapp:categories', args=[category.name]))
+    else:
+        form = EventForm()
 
     context_dict = {'form': form, 'category_name': category_name}
     return render(request, 'webapp/add_event.html', context_dict)
 
 
+
 @login_required
 def edit_event(request, event_id):
-    context_dict = {}
-
     try:
         event = Event.objects.get(id=event_id, organiser=request.user)
-        context_dict['event'] = event
     except:
         return HttpResponse("Event not found or permission not granted.")
 
     if request.method == 'POST':
-        form = EventForm(request.POST, instance=event)
+        form = EventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
             form.save()
             return redirect(reverse('webapp:event_detail', args=[event_id]))
     else:
         form = EventForm(instance=event)
 
-    context_dict['form'] = form
-    return render(request, 'webapp/edit_event.html', context_dict)
+    return render(request, 'webapp/edit_event.html', {'form': form, 'event': event})
+
 
 
 @login_required
@@ -440,6 +427,4 @@ def my_events(request):
 
     events = request.user.attended_events.order_by('date')
     return render(request, 'webapp/my_events.html', {'events': events})
-
-
 
