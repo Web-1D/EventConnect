@@ -236,3 +236,95 @@ textarea {
   border: 1px solid var(--primary-color);
   border-radius: 5px;
 }
+
+
+.organiser-dashboard {
+  max-width: 1100px;
+  margin: auto;
+  padding: 2rem 1rem;
+}
+
+.organiser-dashboard h2 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+}
+
+.your-events h3,
+.add-event-section h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.event-card {
+  background-color: var(--card-bg-secondary);
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 200px;
+}
+
+.event-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.07);
+  transform: scale(1.015);
+}
+
+.event-card h4 {
+  font-size: 1.1rem;
+  margin: 0 0 6px;
+  color: var(--primary-color);
+}
+
+.event-card p {
+  margin: 4px 0;
+  font-size: 0.95rem;
+}
+
+.category-label {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.event-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+
+.edit-btn {
+  background-color: var(--accent-color);
+}
+
+.delete-btn {
+  background-color: #b30000;
+}
+
+.add-event-section {
+  margin-top: 3rem;
+}
+
+.add-event-section .category-list {
+  justify-content: flex-start;
+}
+

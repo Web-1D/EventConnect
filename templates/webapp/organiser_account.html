@@ -1,50 +1,43 @@
 {% extends 'webapp/base.html' %}
 {% load staticfiles %}
 
-{% block title_block %}
-Organiser Account
-{% endblock %}
+{% block title_block %}Organiser Account{% endblock %}
 
 {% block body_block %}
-<section class="organiser-container">
-  <h2 class="section-title">Welcome, {{ user.username }}!</h2>
+<div class="organiser-dashboard">
+  <h2>Welcome, {{ user.username }}!</h2>
 
-  <div class="section-block">
-    <h3>Your Events:</h3>
+  <section class="your-events">
+    <h3>Your Events</h3>
+
     {% if events %}
-      <ul class="event-list">
+      <div class="event-grid">
         {% for event in events %}
-          <li class="event-item clickable-card">
-            <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
-              <span>
-                <strong>{{ event.title }}</strong> ({{ event.category.name }}) – {{ event.date|date:"Y-m-d H:i" }}
-              </span>
-            </a>
-            <span class="action-buttons">
-              <a href="{% url 'webapp:edit_event' event.id %}" class="btn-secondary">Edit</a>
-              <a href="{% url 'webapp:delete_event' event.id %}" class="btn-danger">Delete</a>
-            </span>
-          </li>
+          <div class="event-card">
+            <h4>{{ event.title }} <span class="category-label">({{ event.category.name }})</span></h4>
+            <p><strong>{{ event.date|date:"Y-m-d H:i" }}</strong></p>
+            <p class="event-location">{{ event.location }}</p>
+            <div class="event-actions">
+              <a href="{% url 'webapp:edit_event' event.id %}" class="btn edit-btn">Edit</a>
+              <a href="{% url 'webapp:delete_event' event.id %}" class="btn delete-btn">Delete</a>
+            </div>
+          </div>
         {% endfor %}
-      </ul>
+      </div>
     {% else %}
-      <p class="empty-msg">You haven't created any events yet.</p>
+      <p>You haven't created any events yet.</p>
     {% endif %}
-  </div>
+  </section>
 
-  <hr />
-
-  <div class="section-block">
+  <section class="add-event-section">
     <h3>Add New Event to a Category:</h3>
-    <ul class="category-links">
+    <div class="category-list">
       {% for category in categories %}
-        <li>
-          <a href="{% url 'webapp:add_event' category.name %}" class="category-chip">{{ category.name }}</a>
-        </li>
+        <a href="{% url 'webapp:add_event' category.name %}" class="category-chip-link">
+          <div class="category-chip">{{ category.name|title }}</div>
+        </a>
       {% endfor %}
-    </ul>
-  </div>
-
-
-</section>
+    </div>
+  </section>
+</div>
 {% endblock %}
