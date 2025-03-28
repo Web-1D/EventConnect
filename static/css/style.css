@@ -13,6 +13,7 @@
   --primary-color: rgb(108, 99, 255);
   --primary-hover: #554ee1;
   --text-muted: #888;
+  --colour-red: #9D2235;
 }
 
 
@@ -43,7 +44,6 @@ select {
   font-weight: 600;
   margin-left: 1rem;
   text-decoration: none;
-  transition: color 0.3s;
 }
 
 .nav-links a:hover {
@@ -134,11 +134,13 @@ input[type="submit"]:hover {
   border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 1rem;
-  box-shadow: 0 0 16px rgba(0, 255, 247, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   position: relative;
+<<<<<<< Updated upstream
   animation: pulse-glow-ariu 3s infinite ease-in-out;
+=======
+  color: white;
+>>>>>>> Stashed changes
 }
 
 
@@ -227,7 +229,7 @@ body.dark-mode .event-card p {
 .contact-button {
   display: inline-block;
   padding: 12px 24px;
-  background: linear-gradient(to right, #00e676, #00c853);
+  background: --colour-red;
   color: white;
   font-weight: 600;
   border-radius: 30px;
@@ -282,7 +284,7 @@ body.dark-mode .event-card p {
 .more-categories-link a {
   display: inline-block;
   padding: 10px 20px;
-  background: linear-gradient(to right, #6a11cb, #2575fc);
+  background: --border-color;
   color: white;
   border-radius: 30px;
   font-weight: 600;
