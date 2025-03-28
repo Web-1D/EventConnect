@@ -56,14 +56,6 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
-class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    comment = models.TextField()
-
-    def __str__(self):
-        return f"Comment by {self.user.username} on {self.event.title}"
-
 
 class QAForum(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
