@@ -1,44 +1,91 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from webapp.models import User, Category, Event, Comment, QAForum
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
+from webapp.models import User, Category, Event, Comment, QAForum, Notification
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
-from webapp.forms import CategoryForm, EventForm, UserForm
+from webapp.forms import CategoryForm, EventForm, UserForm, QAForumForm, CommentForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.conf import settings
+from webapp.models import Notification, User, Comment
+from django.db.models import Count
+
 
 
 def home(request):
+    all_categories = Category.objects.all()
+    predefined = ['Sports', 'Music', 'Academic', 'Cultural']
+    main_categories = all_categories.filter(name__in=predefined)
+    popular_events = Event.objects.annotate(num_attendees=Count('attendees')).order_by('-num_attendees')[:4]
+    recent_events = Event.objects.order_by('-created')[:4]
 
-    category_list = Category.objects.all()
-    events = Event.objects.all().order_by('-date')
+    events = Event.objects.all()
 
-    popular_events = Event.objects.all().order_by('-attendees')[:3]
-    recent_events = events[:3]  # Show 3 most recent events
-
-    context_dict = {'categories' : category_list, 'events': events, 'recent_events': recent_events, 'popular_events': popular_events}
+    context_dict = {
+        'categories': all_categories,
+        'all_categories': all_categories,
+        'main_categories': main_categories,
+        'events': events,
+        'show_contact_button': True,
+        'popular_events': popular_events,
+        'recent_events': recent_events,
+    }
 
     response = render(request, 'webapp/home.html', context=context_dict)
     return response
 
-def contact(request):
-    if request.method == "POST":
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        message = request.POST.get('message')
 
-        if name and email and message:
-            # not sure where we're sending messages to
-            return render(request, 'webapp/contact.html', {'message_sent': True})
-        else:
-            return HttpResponse("All fields are required.", status=400)
+def contact(request):
     return render(request, 'webapp/contact.html')
 
+
+@login_required
 def qa(request):
-    return render(request, 'webapp/qa.html')
+    form = QAForumForm()
+    messages = QAForum.objects.order_by('-timestamp')
+
+    if request.method == 'POST':
+        form = QAForumForm(request.POST)
+        if form.is_valid():
+            new_message = form.save(commit=False)
+            new_message.user = request.user
+            new_message.save()
+            return redirect('webapp:qa')
+        else:
+            print(form.errors)
+    return render(request, 'webapp/qa.html', {
+        'form': form,
+        'messages': messages
+    })
+
+
+@login_required
+def delete_message(request, message_id):
+    message = get_object_or_404(QAForum, id=message_id, user=request.user)
+    if request.method == 'POST':
+        message.delete()
+        return redirect('webapp:qa')
+    return render(request, 'webapp/confirm_delete.html', {'message': message})
+
+
+@login_required
+def edit_message(request, message_id):
+    message = get_object_or_404(QAForum, id=message_id, user=request.user)
+
+    if request.method == 'POST':
+        form = QAForumForm(request.POST, instance=message)
+        if form.is_valid():
+            form.save()
+            return redirect('webapp:qa')
+    else:
+        form = QAForumForm(instance=message)
+
+    return render(request, 'webapp/edit_message.html', {'form': form})
+
 
 def categories(request, category_name):
-
     context_dict = {}
 
     try:
@@ -49,22 +96,47 @@ def categories(request, category_name):
     except Category.DoesNotExist:
         context_dict['category'] = None
         context_dict['events'] = None
-    
-    return render(request, 'webapp/category.html', context_dict)
 
-def event(request, event_id):
+    return render(request, 'webapp/category_detail.html', context_dict)
 
+
+def event_detail(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    comments = Comment.objects.filter(event=event).order_by('-timestamp')
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.event = event
+            new_comment.user = request.user
+            new_comment.save()
+            return redirect('webapp:event_detail', event_id=event.id)
+    else:
+        form = CommentForm()
+
+    return render(request, 'webapp/event_detail.html', {
+        'event': event,
+        'comments': comments,
+        'form': form,
+    })
+
+
+
+def event_comments(request, event_id):
     context_dict = {}
 
     try:
         event = Event.objects.get(id=event_id)
-        comments = Comment.objects.filter(event=event)
         context_dict['event'] = event
-        context_dict['comments'] = comments
+        context_dict['comments'] = Comment.objects.filter(event=event)
     except Event.DoesNotExist:
-        return HttpResponse("Event not found.")
-    
-    return render(request, 'webapp/event.html', context_dict)
+        context_dict['event'] = None
+        context_dict['comments'] = None
+        return HttpResponse("Event not found or permission not granted.")
+
+    return render(request, 'webapp/event_comments.html', context_dict)
+
 
 def signup(request):
     registered = False
@@ -73,85 +145,95 @@ def signup(request):
         user_form = UserForm(request.POST)
 
         if user_form.is_valid():
-            user = user_form.save()
-
+            user = user_form.save(commit=False)
             user.set_password(user.password)
             user.save()
+            login(request, user)
 
-            registered = True
+            if user.role == 'organiser':
+                return redirect('webapp:organiser_account')
+            else:
+                return redirect('webapp:home')
+
         else:
             print(user_form.errors)
     else:
         user_form = UserForm()
-    
-    return render(request, 'webapp/signup.html',
-                  context = {'user_form': user_form,
-                             'registered': registered})
 
-def user_login(request):
+    return render(request, 'webapp/signup.html',
+                  context={'user_form': user_form, 'registered': registered})
+
+
+def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
-        print(f"Attempting login for: {username}")
+        role = request.POST.get('role')
 
         user = authenticate(username=username, password=password)
-        
 
-        if user:
-            print(f"Authenticated User: {user}")
-            if user.is_active:
-                login(request, user)
-                return redirect(reverse('webapp:home'))
+        if user is not None and user.role == role:
+            login(request, user)
+            if role == 'organiser':
+                return redirect('webapp:organiser_account')
             else:
-                return HttpResponse("Your EventConnect account is disabled.")
+                return redirect('webapp:home')
         else:
-            print(f"Invalid login details: {username}, {password}")
-            return HttpResponse("Invalid login details supplied.")
-    
-    return render(request, 'webapp/user_login.html')
+            return HttpResponse("Invalid credentials")
+
+    return render(request, 'webapp/login.html')
+
 
 @login_required
 def user_logout(request):
     logout(request)
     return redirect(reverse('webapp:home'))
 
+
 @login_required
 def event_signup(request, event_id):
-    event = Event.objects.get(id=event_id)
-    
-    already_signed_up = False
-    
-    if request.user.is_authenticated:
-        already_signed_up = event.attendees.filter(id=request.user.id).exists()
+    context_dict = {}
+
+    try:
+        event = Event.objects.get(id=event_id)
+        context_dict['event'] = event
+    except Event.DoesNotExist:
+        context_dict['event'] = None
+        return HttpResponse("Event not found.")
 
     if request.method == 'POST':
-        if not already_signed_up:
-            event.attendees.add(request.user)
-            return redirect('webapp:event', event_id=event.id)
-    
-    context_dict = {
-        'event': event,
-        'already_signed_up': already_signed_up,
-    }
+        event.attendees.add(request.user)
+
+        return redirect(reverse('webapp:event_detail', args=[event_id]))
+
     return render(request, 'webapp/event_signup.html', context_dict)
+
 
 @login_required
 def add_comment(request, event_id):
-    event = Event.objects.get(id=event_id)
-    
+    context_dict = {}
+
+    try:
+        event = Event.objects.get(id=event_id)
+        context_dict['event'] = event
+    except Event.DoesNotExist:
+        context_dict['event'] = None
+        return HttpResponse("Event not found.")
+
     if request.method == 'POST':
         message = request.POST.get('comment')
         if message:
             Comment.objects.create(user=request.user, event=event, comment=message)
-        
-        return redirect('webapp:event', event_id=event.id)
 
-    return redirect('webapp:event', event_id=event.id)
+            return redirect(reverse('webapp:event_comments', args=[event_id]))
+        else:
+            return HttpResponse("Comment may not be blank.")
+
+    return render(request, 'webapp.add_comment.html', context_dict)
+
 
 @login_required
 def enable_notifications(request, event_id):
-
     context_dict = {}
 
     try:
@@ -162,58 +244,60 @@ def enable_notifications(request, event_id):
         return HttpResponse("Event not found.")
 
     ## adding to a list of users who want notifications?
-    
+
     return render(request, 'webapp/enable_notifications.html', context_dict)
 
-def organiser_login(request):
-
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        user = authenticate(username=username, password=password)
-
-        if user:
-            if user.is_active:
-                if user.role == 'organiser':
-                    login(request, user)
-                    return redirect(reverse('webapp:organiser_account'))
-                else:
-                    return HttpResponse("You do not have access to the organiser portal.")
-            else:
-                return HttpResponse("Your EventConnect account is disabled.")
-        else:
-            print(f"Invalid login details: {username}, {password}")
-            return HttpResponse("Invalid login details supplied.")
-    
-    return render(request, 'webapp/organiser_login.html')
 
 @login_required
 def organiser_account(request):
+    if request.user.role != 'organiser':
+        return redirect('webapp:home')
     events = Event.objects.filter(organiser=request.user)
-    return render(request, 'webapp/organiser_account.html', {'events' : events})
+    categories = Category.objects.all()
+    return render(request, 'webapp/organiser_account.html', {
+        'events': events,
+        'categories': categories,
+        'user': request.user,
+    })
+
 
 @login_required
-def add_event(request):
+def add_event(request, category_name):
+    try:
+        category = Category.objects.get(name=category_name)
+    except Category.DoesNotExist:
+        return HttpResponse("Category does not exist.")
+
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
             event = form.save(commit=False)
+            event.category = category
             event.organiser = request.user
             event.save()
-            return redirect(reverse('webapp:organiser_account'))
+
+            if form.cleaned_data.get('notify_users'):
+                for user in User.objects.filter(role='user'):
+                    Notification.objects.create(
+                        recipient=user,
+                        sender=request.user,
+                        message=f"New event: {event.title} was created in category {category.name}.",
+                        event=event,
+                    )
+
+            return redirect(reverse('webapp:categories', args=[category.name]))
     else:
         form = EventForm()
 
-    return render(request, 'webapp/add_event.html', {'form': form})
+    context_dict = {'form': form, 'category_name': category_name}
+    return render(request, 'webapp/add_event.html', context_dict)
+
+
 
 @login_required
 def edit_event(request, event_id):
-    context_dict = {}
-    
     try:
         event = Event.objects.get(id=event_id, organiser=request.user)
-        context_dict['event'] = event 
     except:
         return HttpResponse("Event not found or permission not granted.")
 
@@ -221,17 +305,16 @@ def edit_event(request, event_id):
         form = EventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
             form.save()
-            return redirect(reverse('webapp:event', args=[event_id]))
-        else:
-            form = EventForm(instance=event)
+            return redirect(reverse('webapp:event_detail', args=[event_id]))
+    else:
+        form = EventForm(instance=event)
 
-    context_dict['form'] = form
+    return render(request, 'webapp/edit_event.html', {'form': form, 'event': event})
 
-    return render(request, 'webapp/edit_event.html', context_dict)
+
 
 @login_required
 def delete_event(request, event_id):
-
     try:
         event = Event.objects.get(id=event_id, organiser=request.user)
         event.delete()
@@ -240,23 +323,119 @@ def delete_event(request, event_id):
         return HttpResponse("Event not found or permission not granted.")
 
 
+def ajax_search_events(request):
+    if request.is_ajax():
+        query = request.GET.get('term', '')
+        events = Event.objects.filter(title__icontains=query)
+        results = [event.title for event in events]
+        return JsonResponse(results, safe=False)
+
+
+def autocomplete_events(request):
+    if request.is_ajax():
+        term = request.GET.get('term', '')
+        category = request.GET.get('category', '')
+        events = Event.objects.filter(title__icontains=term)
+
+        if category:
+            events = events.filter(category__name__iexact=category)
+
+        results = [{'title': event.title} for event in events[:10]]
+        return JsonResponse(results, safe=False)
+
+    return JsonResponse([], safe=False)
+
+
+def search_events(request):
+    query = request.GET.get('q', '')
+    category_name = request.GET.get('category', '')
+
+    events = Event.objects.all()
+    if query:
+        events = events.filter(title__icontains=query)
+
+    if category_name:
+        events = events.filter(category__name__iexact=category_name)
+
+    data = [{
+        'id': event.id,
+        'title': event.title,
+        'date': event.date.strftime('%Y-%m-%d'),
+        'location': event.location,
+    } for event in events]
+
+    return JsonResponse(data, safe=False)
+
+
+def search_event_redirect(request):
+    if request.method == 'GET':
+        title = request.GET.get('search_term', '').strip()
+        category_name = request.GET.get('category_filter', '').strip()
+        try:
+            if category_name:
+                event = Event.objects.get(title__iexact=title, category__name__iexact=category_name)
+            else:
+                event = Event.objects.get(title__iexact=title)
+
+            return redirect('webapp:event_detail', event_id=event.id)
+
+        except Event.DoesNotExist:
+            return render(request, 'webapp/search_no_result.html', {
+                'title': title,
+                'category': category_name or "All Categories",
+            })
+
+
+@login_required
+def notifications_view(request):
+    if request.user.role != 'user':
+        return HttpResponse("Access Denied")
+
+    notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
+    return render(request, 'webapp/notifications.html', {'notifications': notifications})
+
+
+def more_categories(request):
+    predefined = ['Sports', 'Music', 'Academic', 'Cultural']
+    other_categories = Category.objects.exclude(name__in=predefined)
+
+    return render(request, 'webapp/more_categories.html', {
+        'other_categories': other_categories,
+    })
+
+def more_events(request):
+    predefined = ['Sports', 'Music', 'Academic', 'Cultural']
+    other_categories = Category.objects.exclude(name__in=predefined)
+    events = Event.objects.filter(category__in=other_categories).order_by('-date')
+
+    return render(request, 'webapp/more_events.html', {
+        'events': events,
+        'title': 'More Events'
+    })
 
 
 
+@login_required
+def register_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.user.role == 'user':
+        event.attendees.add(request.user)
+    return redirect('webapp:event_detail', event_id=event.id)
 
 
+@login_required
+def unregister_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.user.role == 'user':
+        event.attendees.remove(request.user)
+    return redirect('webapp:event_detail', event_id=event.id)
 
 
+@login_required
+def my_events(request):
+    if request.user.role != 'user':
+        return redirect('webapp:home')
 
-
-
-
-
-
-
-
-
-
-
-
+    events = request.user.attended_events.order_by('date')
+    return render(request, 'webapp/my_events.html', {'events': events})
 

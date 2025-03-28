@@ -1,0 +1,22 @@
+{% extends 'webapp/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+Edit Event
+{% endblock %}
+
+{% block body_block %}
+<section class="form-section">
+  <h2 class="section-title">Edit Event</h2>
+
+  <form method="post" enctype="multipart/form-data" class="form-card">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-primary full-width">Save Changes</button>
+  </form>
+
+  <p class="back-link">
+    <a href="{% url 'webapp:organiser_account' %}">← Back to your Admin</a>
+  </p>
+</section>
+{% endblock %}

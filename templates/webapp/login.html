@@ -1,0 +1,44 @@
+{% extends 'webapp/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+Login
+{% endblock %}
+
+{% block body_block %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="auth-title">Welcome back</h2>
+    <p class="auth-subtitle">Login to your EventConnect account</p>
+
+    <form method="POST" action="{% url 'webapp:login' %}" class="auth-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" name="username" required placeholder="Enter your username" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" name="password" required placeholder="••••••••" />
+      </div>
+
+      <div class="form-group">
+        <label for="role">Login as:</label>
+        <select name="role" required>
+          <option value="user">User</option>
+          <option value="organiser">Organiser</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-primary full-width">Login</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Don’t have an account?
+        <a href="{% url 'webapp:signup' %}">Sign up here</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

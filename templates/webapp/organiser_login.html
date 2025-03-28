@@ -1,27 +1,36 @@
 {% extends 'webapp/base.html' %}
-{% load staticfiles %}
 
 {% block title_block %}
-Organsier Login
+Organiser Account
 {% endblock %}
 
 {% block body_block %}
-<h1>Organiser Login to EventConnect</h1>
-<div class="login-container">
-    <form id="organiser_form" method="post" action="{% url 'webapp:organiser_login' %}">
-        {% csrf_token %}
+<h2>Welcome, {{ user.username }}!</h2>
 
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" value="" size="50"/>
-        </div>
+<h3>Your Events:</h3>
+{% if events %}
+  <ul>
+    {% for event in events %}
+      <li>
+        <a href="{% url 'webapp:event_detail' event.id %}">{{ event.title }}</a>
+        — {{ event.date }} @ {{ event.location }}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>You haven't created any events yet</p>
+{% endif %}
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" value="" size="50"/>
-        </div>
+<hr>
 
-        <button type="submit">Submit</button>
-    </form>
-</div>
+<h3>Add New Event to a Category:</h3>
+<ul>
+  {% for category in categories %}
+    <li>
+      <a href="{% url 'webapp:add_event' category_name=category.name %}">
+        Add Event to <strong>{{ category.name }}</strong>
+      </a>
+    </li>
+  {% endfor %}
+</ul>
 {% endblock %}

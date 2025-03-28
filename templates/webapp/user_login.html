@@ -8,21 +8,14 @@ User Login
 {% block body_block %}
 <h1>User Login to EventConnect</h1>
 
-<div class="login-container">
-    <form id="login_form" method="post" action="{% url 'webapp:user_login' %}">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" value="" size="50"/>
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" value="" size="50"/>
-        </div>
-
-        <button type="submit">Submit</button>
-    </form>
-</div>
+<form id="login_form" method="post" action="{% url 'webapp:user_login' %}">
+  {% csrf_token %}
+  <label>Username:</label>
+  <input type="text" name="username" value="" size="50" />
+  <br />
+  <label>Password:</label>
+  <input type="text" name="password" value="" size="50" />
+  <br />
+  <input type="submit" value="submit" />
+</form>
 {% endblock %}

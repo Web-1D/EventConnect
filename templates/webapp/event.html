@@ -1,48 +1,25 @@
 {% extends 'webapp/base.html' %}
+{% load staticfiles %}
 
 {% block title_block %}
-    {{ event.title }} - Event Details
+{% if event %}
+  {{ event.title }}
+{% else %}
+  Unknown Event
+{% endif %}
 {% endblock %}
 
 {% block body_block %}
-{% if event.event_image %}
-    <img src="{{ event.event_image.url }}" alt="{{ event.title }}" style="width: 400px; height: 300px;">
-{% endif %}
-<h1>{{ event.title }}</h1>
-<p>{{ event.description }}</p>
-<p>Date: {{ event.date }}</p>
-<p>Location: {{ event.location }}</p>
-<p>Category: {{ event.category.name }}</p>
-
-{% if user.is_authenticated %}
-    <form method="post" action="{% url 'webapp:event_signup' event.id %}">
-        {% csrf_token %}
-        <button type="submit">Sign Up for This Event</button>
-    </form>
+{% if event %}
+  <h1>{{ event.name }}</h1>
+  <p>{{ event.description }}</p>
+  <p>{{ event.time_date }}</p>
+  {% if user.is_authenticated %}
+    <a href="{% url 'webapp:sign_up_for_event' event.slug %}">Sign Up for Event</a><br />
+  {% else %}
+    Log in to sign up for event
+  {% endif %}
 {% else %}
-    <p>You must be logged in to sign up for this event.</p>
+  The specified event does not exist or has already happened.
 {% endif %}
-
-<h3>Comments</h3>
-
-{% if comments %}
-    <ul>
-        {% for comment in comments %}
-            <li>{{ comment.user.username }}: {{ comment.comment }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No comments yet.</p>
-{% endif %}
-
-{% if user.is_authenticated %}
-    <form method="post" action="{% url 'webapp:add_comment' event.id %}">
-        {% csrf_token %}
-        <textarea name="comment" required></textarea>
-        <button type="submit">Post Comment</button>
-    </form>
-{% else %}
-    <p>You must be logged in to leave a comment.</p>
-{% endif %}
-
 {% endblock %}

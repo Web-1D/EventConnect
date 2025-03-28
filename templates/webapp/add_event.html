@@ -1,38 +1,21 @@
 {% extends 'webapp/base.html' %}
 
 {% block title_block %}
-    {% if event %}
-        Edit Event
-    {% else %}
-        Add Event
-    {% endif %}
+Add Event
 {% endblock %}
 
 {% block body_block %}
-<h1>
-    {% if event %}
-        Edit Event
-    {% else %}
-        Create a New Event
-    {% endif %}
-</h1>
+<section class="form-section">
+  <h2 class="section-title">Add Event to Category: {{ category_name|title }}</h2>
 
-<div>
-    <form id="new_event_form" method="post" action="{% if event %}{% url 'webapp:edit_event' event.id %}{% else %}{% url 'webapp:add_event' %}{% endif %}">
-        {% csrf_token %}
-        {% for field in form %}
-            <p>
-                {{ field.label_tag }}
-                {{ field }}
-                {{ field.errors }}
+  <form method="post" enctype="multipart/form-data" class="form-card">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-primary full-width">Create Event</button>
+  </form>
 
-                {% if field.name == 'date' %}
-                    <small class="form-text text-muted">Please enter the date in the format YYYY-MM-DD HH:MM:SS.</small>
-                {% endif %}
-            </p>
-        {% endfor %}
-        <input type="submit" name="submit" value="{% if event %}Update Event{% else %}Create Event{% endif %}" />
-    </form>
-</div>
-
+  <p class="back-link">
+    <a href="{% url 'webapp:organiser_account' %}">← Back to your dashboard</a>
+  </p>
+</section>
 {% endblock %}

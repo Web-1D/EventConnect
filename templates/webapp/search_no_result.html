@@ -1,0 +1,16 @@
+{% extends 'webapp/base.html' %}
+
+{% block title_block %}
+No Event Found
+{% endblock %}
+
+{% block body_block %}
+<h2>Search Result</h2>
+
+<p>
+  Sorry, we couldn't find any event titled "<strong>{{ title }}</strong>"
+  {% if category != "All Categories" %} in the category "<strong>{{ category }}</strong>"{% endif %}.
+</p>
+
+<p>Try <a href="{% url 'webapp:home' %}">other events</a>.</p>
+{% endblock %}

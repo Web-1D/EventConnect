@@ -1,0 +1,26 @@
+{% extends 'webapp/base.html' %}
+{% block title_block %}My Events{% endblock %}
+
+{% block body_block %}
+<section class="organiser-container">
+  <h2 class="section-title">Your Registered Events</h2>
+
+  {% if events %}
+    <ul class="event-list">
+      {% for event in events %}
+        <li class="event-item">
+          <span><strong>{{ event.title }}</strong> – {{ event.date|date:"Y-m-d H:i" }}</span>
+          <span class="action-buttons">
+            <a href="{% url 'webapp:event_detail' event.id %}" class="btn-secondary">View</a>
+            <form method="get" action="{% url 'webapp:unregister_event' event.id %}" style="display:inline;">
+              <button type="submit" class="btn-danger">Withdraw</button>
+            </form>
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="empty-msg">You haven't registered for any events yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

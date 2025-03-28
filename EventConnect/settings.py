@@ -27,7 +27,7 @@ SECRET_KEY = 'wj58am*l=ns*s6%szw4btj38i5t^(^17wbp8b(7kxoe$k@844i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['eventconnect.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -110,6 +110,10 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M']
+
+
+
 USE_I18N = True
 
 USE_L10N = True
@@ -133,5 +137,3 @@ MEDIA_URL = '/media/'
 LOGIN_URL = 'webapp:login'
 
 AUTH_USER_MODEL = 'webapp.User'
-
-

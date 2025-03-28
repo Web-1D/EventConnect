@@ -1,44 +1,89 @@
 <!DOCTYPE html>
-
-{% load staticfiles %}
-
-<html>
-<head lang="en">
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <title>EventConnect - {% block title_block %}Welcome to EventConnect{% endblock %}</title>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title_block %}EventConnect{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% block extra_head %}{% endblock %}
 </head>
+
 <body>
 
 <div class="topnav">
-    {% if user.is_authenticated %}
-    	<span>Welcome, {{ user.username }}!</span>
-    	<a href="{% url 'webapp:logout' %}">Logout</a>
-
-    	{% if user.role == "organiser" %}
-        	<a href="{% url 'webapp:organiser_account' %}">Organiser Dashboard</a>
-    	{% else %}
-        	<a href="{% url 'webapp:home' %}">User Dashboard</a>
-    	{% endif %}
-	{% else %}
-    	<a href="{% url 'webapp:signup' %}">Sign Up</a>
-    	<a href="{% url 'webapp:user_login' %}">User Login</a>
-    	<a href="{% url 'webapp:organiser_login' %}">Organiser Login</a>
-	{% endif %}
-
-
     <a href="{% url 'webapp:home' %}">Home</a>
+    {% if user.is_authenticated %}
+        {% if user.role == 'organiser' %}
+            <a href="{% url 'webapp:organiser_account' %}">Admin</a>
+        {% endif %}
+        {% if user.role == 'user' %}
+            <a href="{% url 'webapp:notifications' %}">Notifications</a>
+            <a href="{% url 'webapp:my_events' %}">My Events</a>
+        {% endif %}
+        <a href="{% url 'webapp:qa' %}">Q&A</a>
+        <a href="{% url 'webapp:logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'webapp:login' %}">Login</a>
+        <a href="{% url 'webapp:signup' %}">Sign Up</a>
+    {% endif %}
 </div>
 
-<h1 id="main_title">EventConnect</h1>
-
-{% block body_block %}
-{% endblock %}
+<main class="container">
+    {% block body_block %}{% endblock %}
+</main>
 
 <div class="bottomnav">
-    <a href="{% url 'webapp:qa' %}" id="qanda">Q&A Forum</a>
-    <a href="{% url 'webapp:contact' %}" id="contact">Contact Us</a>
+    {% if show_contact_button %}
+        <a href="{% url 'webapp:contact' %}">Contact Us</a>
+    {% endif %}
 </div>
+
+{% block extra_scripts %}
+<script>
+    $(document).ready(function () {
+        $("#searchInput").on("input", function () {
+            let query = $(this).val();
+
+            if (query.length > 0) {
+                $.ajax({
+                    url: "{% url 'webapp:autocomplete_events' %}",
+                    data: {
+                        'term': query,
+                        'category': $('#category-select').val()
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        let resultsDiv = $("#autocomplete-results");
+                        resultsDiv.empty();
+
+                        if (data.length > 0) {
+                            data.forEach(function (item) {
+                                resultsDiv.append('<div class="suggestion-item" style="padding: 5px; cursor: pointer;">' + item.title + '</div>');
+                            });
+                            resultsDiv.show();
+                        } else {
+                            resultsDiv.hide();
+                        }
+                    }
+                });
+            } else {
+                $("#autocomplete-results").hide();
+            }
+        });
+
+        $(document).on("click", ".suggestion-item", function () {
+            $("#searchInput").val($(this).text());
+            $("#autocomplete-results").hide();
+        });
+
+        $('#category-select').on('change', function () {
+            $('#searchInput').trigger('input');
+        });
+    });
+</script>
+{% endblock %}
 
 </body>
 </html>

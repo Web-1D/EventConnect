@@ -1,0 +1,17 @@
+{% extends 'webapp/base.html' %}
+
+{% block title_block %}Edit Message{% endblock %}
+
+{% block body_block %}
+<div class="card center-box">
+  <h2 class="mb-4">📝 Edit Your Message</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-buttons">
+      <button type="submit" class="btn btn-success">💾 Save Changes</button>
+      <a href="{% url 'webapp:qa' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

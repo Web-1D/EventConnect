@@ -1,0 +1,42 @@
+{% extends 'webapp/base.html' %}
+{% load static %}
+
+{% block title_block %}Notifications{% endblock %}
+
+{% block body_block %}
+  <div class="notification-wrapper">
+    <h2 class="notification-title">Your Notifications</h2>
+
+    {% if notifications %}
+      <div class="notification-box">
+        {% for note in notifications %}
+          {% if note.event %}
+            <a href="{% url 'webapp:event_detail' note.event.id %}" class="notification-link">
+              <div class="notification-bubble hoverable">
+                <div class="bubble-meta">
+                  From: <strong>{{ note.sender.username }}</strong>
+                </div>
+                <div class="bubble-text">{{ note.message }}</div>
+                <div class="bubble-footer">
+                  {{ note.timestamp|date:"d M, H:i" }}
+                </div>
+              </div>
+            </a>
+          {% else %}
+            <div class="notification-bubble">
+              <div class="bubble-meta">
+                From: <strong>{{ note.sender.username }}</strong>
+              </div>
+              <div class="bubble-text">{{ note.message }}</div>
+              <div class="bubble-footer">
+                {{ note.timestamp|date:"d M, H:i" }}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="no-notifications">You have no notifications yet.</p>
+    {% endif %}
+  </div>
+{% endblock %}
