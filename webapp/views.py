@@ -23,14 +23,16 @@ def home(request):
 
     # Had to use this due to attendees being a ManytoMany Field
     # couldn't use basic orderby
-    popular_events = Event.objects.annotate(num_attendees=Count('attendees')).order_by('-num_attendees')[:3]
-    recent_events = events[:3] 
+    popular_events = Event.objects.annotate(num_attendees=Count('attendees')).order_by('-num_attendees')
+    recent_events = events
 
     context_dict = {
         'categories': all_categories,
         'all_categories': all_categories,
         'main_categories': main_categories,
         'events': events,
+        'recent_events': recent_events,
+        'popular_events': popular_events,
         'show_contact_button': True,
     }
 

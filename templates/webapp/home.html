@@ -35,7 +35,7 @@ Home
   <h3>Popular Events</h3>
   {% if events %}
     <div class="event-grid">
-      {% for event in events|slice:":4" %}
+      {% for event in popular_events|slice:":4" %}
         <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
           <div class="event-card" style="background-image: url('{% if event.event_image %}{{ event.event_image.url }}{% endif %}');">
             <h4>{{ event.title }}</h4>
@@ -54,7 +54,7 @@ Home
   <h3>Recently Added</h3>
   {% if events %}
     <div class="event-grid">
-      {% for event in events|slice:":4" %}
+      {% for event in recent_events|slice:":4" %}
         <a href="{% url 'webapp:event_detail' event.id %}" class="event-card-link">
           <div class="event-card" style="background-image: url('{% if event.event_image %}{{ event.event_image.url }}{% endif %}');">
             <h4>{{ event.title }}</h4>

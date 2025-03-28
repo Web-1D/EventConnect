@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'EventConnect.settings')
 django.setup()
 
-from webapp.models import User, Category, Event
+from webapp.models import User, Category, Event, Comment
 
 def populate():
 
@@ -144,7 +144,7 @@ def populate():
         category=academic_category,
         google_maps_link=gmaps_qmu,
         organiser=organiser3,
-        event_image="event_images/philosophy.jpg"
+        event_image="event_images/philosphy.jpg"
     )
 
     # Cultural events
@@ -178,7 +178,7 @@ def populate():
         category=cultural_category,
         google_maps_link=gmaps_jms,
         organiser=organiser1,
-        event_image="event_images/germany.jpg"
+        event_image="event_images/german.jpg"
     )
 
     event13 = Event.objects.create(
@@ -213,6 +213,18 @@ def populate():
         organiser=organiser1,
         event_image="event_images/climate.jpg"
     )
+
+    event3.attendees.add(user1, user2)
+    event5.attendees.add(user1)
+    event7.attendees.add(user1, user2)
+    event9.attendees.add(user2)
+
+    Comment.objects.create(user=user1, event=event1, comment="Excited for the matches!")
+    Comment.objects.create(user=user2, event=event2, comment="Love a bit of rugby!")
+    Comment.objects.create(user=user1, event=event3, comment="Im going to beat everyone")
+    Comment.objects.create(user=user2, event=event4, comment="Hopefully they have a saxophone?!")
+    Comment.objects.create(user=user1, event=event5, comment="Ive got the best voice ever")
+
 
     print("Database populated successfully.")
 
