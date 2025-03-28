@@ -19,7 +19,7 @@ def home(request):
     predefined = ['Sports', 'Music', 'Academic', 'Cultural']
     main_categories = all_categories.filter(name__in=predefined)
     popular_events = Event.objects.annotate(num_attendees=Count('attendees')).order_by('-num_attendees')[:4]
-    recent_events = Event.objects.order_by('-date')[:4]
+    recent_events = Event.objects.order_by('-created')[:4]
 
     events = Event.objects.all()
 
