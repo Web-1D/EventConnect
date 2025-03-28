@@ -243,8 +243,6 @@ def enable_notifications(request, event_id):
         context_dict['event'] = None
         return HttpResponse("Event not found.")
 
-    ## adding to a list of users who want notifications?
-
     return render(request, 'webapp/enable_notifications.html', context_dict)
 
 
